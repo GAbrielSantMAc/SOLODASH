@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoloDash — Plataforma de Artistas</title>
+<link
+href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+
+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+--cr:#FBF8F3;--be:#E8DDD0;--ou:#A07842;--oc:#C9A76A;--ma:#2C1810;--mm:#5C3D2E;
+--vd:#25D366;--vd2:#128C7E;--vm:#CC3333;--cl:#F4F0EB;--so:rgba(44,24,16,.11);
+--blue:#00BFFF;--blue2:#0077CC;--blue-glow:rgba(0,191,255,.2);
+--rad:14px;--rad-sm:10px;--sidebar:250px;--header:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM
+
+Sans',sans-serif;background:var(--be);color:var(--ma);min-height:100vh;display:flex;overflow-
+x:hidden;}
+
+a{text-decoration:none;}
+img{max-width:100%;}
+textarea,input,select,button{font-family:'DM Sans',sans-serif;}
+/* ===== SIDEBAR ===== */
+.sidebar{width:var(--sidebar);background:var(--ma);min-height:100vh;display:flex;flex-directio
+n:column;position:fixed;left:0;top:0;z-index:200;}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-a{display:flex;align-items:center;gap:9px;}
+.logo-i{width:34px;height:34px;background:var(--ou);border-radius:9px;display:flex;align-item
+s:center;justify-content:center;flex-shrink:0;}
+.logo-i svg{width:19px;height:19px;fill:#fff;}
+.logo-n{font-family:'Syne',sans-serif;font-size:1.15rem;color:#fff;letter-spacing:3px;font-weight
+:800;}
+.sidebar-nav{flex:1;padding:10px 0;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px
+18px;color:rgba(255,255,255,.48);font-size:.85rem;font-weight:500;cursor:pointer;transition:a
+ll .2s;border-left:3px solid transparent;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.82);}
+.nav-item.on{background:rgba(201,167,106,.11);color:var(--oc);border-left-color:var(--oc);}
+.nav-item svg{width:17px;height:17px;fill:currentColor;flex-shrink:0;}
+.nav-dot{background:var(--vm);width:6px;height:6px;border-radius:50%;position:absolute;rig
+ht:14px;}
+.nav-badge{background:var(--vm);color:#fff;font-size:.58rem;font-weight:700;padding:2px
+6px;border-radius:20px;position:absolute;right:10px;}
+.soloai-item
+.nav-label{background:linear-gradient(90deg,var(--blue),#e0f7ff);-webkit-background-clip:text
+;-webkit-text-fill-color:transparent;font-weight:700;}
+
+.soloai-glow{position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180
+deg,var(--blue),var(--blue2));box-shadow:0 0 8px var(--blue-glow);}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);}
+.sub-badge{background:linear-gradient(135deg,var(--ou),var(--oc));border-radius:10px;paddi
+ng:10px 13px;cursor:pointer;transition:transform .2s;}
+.sub-badge:hover{transform:scale(1.02);}
+.sub-badge-t{color:#fff;font-size:.78rem;font-weight:700;margin-bottom:1px;}
+.sub-badge-s{color:rgba(255,255,255,.7);font-size:.7rem;}
+/* ===== FAB + (artista) ===== */
+.fab-post{position:fixed;right:28px;bottom:28px;width:52px;height:52px;background:var(--ou);
+border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content
+:center;z-index:300;box-shadow:0 4px 16px rgba(160,120,66,.45);transition:all .25s;}
+.fab-post:hover{background:var(--mm);transform:scale(1.07);}
+.fab-post svg{width:24px;height:24px;fill:#fff;}
+.fab-post.show{display:flex;}
+/* ===== MAIN ===== */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.header{height:var(--header);background:var(--cr);border-bottom:1px solid
+var(--be);display:flex;align-items:center;padding:0
+28px;gap:14px;position:sticky;top:0;z-index:100;}
+.header-search{flex:1;max-width:420px;}
+.busca-i{width:100%;padding:9px 16px;border:1.5px solid
+var(--be);border-radius:50px;background:var(--cl);font-size:.88rem;color:var(--ma);outline:no
+ne;transition:border-color .2s;}
+.busca-i:focus{border-color:var(--oc);}
+.busca-i::placeholder{color:#bbb;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.h-btn{width:36px;height:36px;border-radius:50%;background:var(--cl);border:1px solid
+var(--be);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all
+.2s;position:relative;}
+.h-btn:hover{background:var(--be);}
+.h-btn svg{width:17px;height:17px;fill:var(--mm);}
+.h-btn
+.badge-notif{position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:var(--v
+m);border-radius:50%;border:2px solid var(--cr);}
+.h-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid
+var(--ou);cursor:pointer;}
+/* ===== PAGES ===== */
+.page{display:none;padding:28px;min-height:calc(100vh - var(--header));}
+.page.ativa{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fade-in{animation:fi .3s ease;}
+/* PAGE HEADER */
+
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:
+24px;}
+.page-title{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;color:var(--ma);}
+.page-sub{font-size:.84rem;color:#888;margin-top:3px;}
+/* HOME HERO */
+.home-hero{background:linear-gradient(135deg,var(--ma) 0%,var(--mm) 60%,#3d2518
+100%);border-radius:18px;padding:36px;position:relative;overflow:hidden;margin-bottom:24p
+x;}
+.home-hero::before{content:'';position:absolute;top:-70px;right:-70px;width:280px;height:280
+px;border-radius:50%;background:rgba(160,120,66,.1);}
+.home-hero
+h1{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#fff;line-height:1.15;ma
+rgin-bottom:9px;position:relative;z-index:1;}
+.home-hero
+p{color:rgba(255,255,255,.55);font-size:.93rem;position:relative;z-index:1;margin-bottom:22p
+x;}
+.hero-search{display:flex;gap:10px;position:relative;z-index:1;max-width:560px;}
+.hero-search input{flex:1;padding:12px
+20px;border:none;border-radius:50px;background:rgba(255,255,255,.11);backdrop-filter:blur(
+8px);color:#fff;font-size:.9rem;outline:none;}
+.hero-search input::placeholder{color:rgba(255,255,255,.45);}
+.hero-btn{padding:12px
+26px;background:var(--ou);color:#fff;border:none;border-radius:50px;font-weight:700;font-siz
+e:.88rem;cursor:pointer;transition:all .2s;}
+.hero-btn:hover{background:var(--oc);}
+/* FILTROS */
+.filtros-row{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+.chip{padding:7px 16px;border-radius:50px;border:1.5px solid
+var(--be);background:#fff;font-size:.8rem;font-weight:500;cursor:pointer;color:var(--mm);trans
+ition:all .2s;}
+.chip.on{background:var(--ou);border-color:var(--ou);color:#fff;}
+.chip:hover:not(.on){border-color:var(--oc);color:var(--ou);}
+/* SECTION TITLE */
+.st{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--mm);margin-botto
+m:16px;display:flex;align-items:center;gap:10px;}
+.st::after{content:'';flex:1;height:1px;background:var(--be);}
+/* GRID ARTISTAS */
+.artists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;
+margin-bottom:28px;}
+.card-art{background:#fff;border-radius:var(--rad);padding:18px;box-shadow:0 2px 10px
+var(--so);transition:all .25s;border:1px solid transparent;}
+.card-art:hover{transform:translateY(-2px);box-shadow:0 6px 20px
+var(--so);border-color:var(--be);}
+.ph{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+
+.pav{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2.5px solid
+var(--oc);cursor:pointer;transition:transform .2s;flex-shrink:0;}
+.pav:hover{transform:scale(1.06);}
+.pi{flex:1;min-width:0;}
+.pn{font-weight:600;font-size:.92rem;color:var(--ou);cursor:pointer;display:block;font-family:'S
+yne',sans-serif;}
+.pl{font-size:.74rem;color:#aaa;margin-top:1px;}
+.badge{background:var(--ou);color:#fff;font-size:.62rem;font-weight:600;letter-spacing:.7px;p
+adding:3px 9px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
+.badge.new{background:#1565C0;}
+.pt{font-size:.83rem;line-height:1.65;color:var(--mm);margin-bottom:12px;}
+.pf{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.pf img{border-radius:9px;object-fit:cover;height:100px;width:100%;}
+.pa{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.ba{display:flex;align-items:center;gap:5px;padding:6px
+12px;border-radius:50px;border:none;font-size:.78rem;font-weight:500;cursor:pointer;transiti
+on:all .2s;}
+.ba svg{width:13px;height:13px;}
+.bu{background:#E8F7EC;color:#2E7D4A;}
+.bu:hover{background:#2E7D4A;color:#fff;}
+.bc{background:#FFF3E0;color:var(--ou);}
+.bc:hover{background:var(--ou);color:#fff;}
+.btn-fav{background:#fce4ec;color:#c2185b;}
+.btn-fav:hover{background:#c2185b;color:#fff;}
+.btn-rec{background:#F3E5F5;color:#7B1FA2;}
+.btn-rec:hover{background:#7B1FA2;color:#fff;}
+.btn-chat-req{background:#E3F2FD;color:#1565C0;}
+.btn-chat-req:hover{background:#1565C0;color:#fff;}
+/* POST media */
+.post-img-full{width:100%;border-radius:10px;object-fit:cover;max-height:220px;margin-botto
+m:10px;}
+/* ESTILOS GRID */
+.estilos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;
+margin-bottom:28px;}
+.ec{position:relative;border-radius:11px;overflow:hidden;cursor:pointer;}
+.ec img{width:100%;height:82px;object-fit:cover;display:block;transition:transform .3s;}
+.ec:hover img{transform:scale(1.07);}
+.ec
+span{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(44
+,24,16,.78));color:#fff;font-size:.7rem;font-weight:600;text-align:center;padding:5px 4px 4px;}
+/* ===== PERFIL ARTISTA (3rd party) ===== */
+.perfil-header{background:linear-gradient(150deg,var(--ma) 0%,var(--mm)
+100%);border-radius:18px;padding:32px;display:flex;gap:24px;align-items:flex-start;margin-b
+ottom:20px;}
+
+.pfoto{width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid
+var(--ou);flex-shrink:0;}
+.pnome{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-botto
+m:7px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.tag{background:rgba(255,255,255,.11);color:rgba(255,255,255,.8);font-size:.7rem;padding:3
+px 9px;border-radius:20px;display:flex;align-items:center;gap:3px;}
+.tag svg{width:10px;height:10px;fill:var(--oc);}
+.nota-row{display:flex;align-items:center;gap:8px;}
+.nota{font-size:1.7rem;font-weight:700;color:var(--oc);font-family:'Syne',sans-serif;}
+.stars{color:var(--oc);font-size:.85rem;}
+.ntt{font-size:.73rem;color:rgba(255,255,255,.5);}
+/* TABS */
+.tabs{display:flex;gap:0;background:var(--cl);border-radius:11px;padding:3px;margin-bottom:
+20px;}
+.tab{flex:1;padding:9px
+4px;border:none;background:none;color:var(--mm);font-size:.79rem;font-weight:600;letter-sp
+acing:.4px;cursor:pointer;border-radius:8px;transition:all .25s;}
+.tab.on{background:#fff;color:var(--ou);box-shadow:0 2px 6px var(--so);}
+.aba{display:none;}
+.aba.on{display:block;}
+/* FAIXAS */
+.faixas-list{}
+.mi{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid
+var(--be);}
+.mn{width:26px;height:26px;background:var(--be);border-radius:7px;display:flex;align-items:
+center;justify-content:center;font-size:.74rem;font-weight:600;color:var(--ou);flex-shrink:0;}
+.mi-info{flex:1;}
+.mi-nome{font-size:.88rem;font-weight:600;color:var(--ma);}
+.mi-dur{font-size:.72rem;color:#aaa;margin-top:1px;}
+.bmp{width:32px;height:32px;border-radius:50%;background:var(--ou);border:none;cursor:po
+inter;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.bmp:hover{background:var(--ma);}
+.bmp svg{width:13px;height:13px;fill:#fff;margin-left:2px;}
+.btn-gravar-comp{background:#F3E5F5;color:#7B1FA2;border:none;border-radius:50px;pad
+ding:5px 12px;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-gravar-comp:hover{background:#7B1FA2;color:#fff;}
+/* PARTICIPAÇÕES */
+.part-card{background:#fff;border-radius:13px;overflow:hidden;margin-bottom:14px;box-shad
+ow:0 2px 8px var(--so);}
+.part-loc{background:var(--ma);padding:8px
+14px;display:flex;align-items:center;gap:7px;font-size:.75rem;color:rgba(255,255,255,.8);}
+.part-loc svg{width:13px;height:13px;fill:var(--oc);}
+.part-img{width:100%;height:160px;object-fit:cover;}
+.part-body{padding:13px;}
+
+.part-nome{font-weight:600;font-size:.88rem;color:var(--ma);}
+.part-desc{font-size:.8rem;color:#777;margin-top:3px;line-height:1.55;}
+/* NOVIDADES */
+.novidades-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1
+4px;}
+.nov-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px
+var(--so);transition:all .25s;cursor:pointer;}
+.nov-card:hover{transform:translateY(-2px);}
+.nov-img{width:100%;height:120px;object-fit:cover;}
+.nov-body{padding:11px 13px;}
+
+.nov-tit{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--ma);margin-
+bottom:3px;}
+
+.nov-det{font-size:.75rem;color:#888;}
+/* SOCIAL LINKS */
+.social-grid{display:flex;gap:10px;flex-wrap:wrap;}
+.social-btn{display:flex;align-items:center;gap:8px;padding:10px
+18px;border-radius:50px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;transiti
+on:all .2s;}
+.social-btn:hover{transform:scale(1.03);}
+.soc-wpp{background:#E8F7EC;color:#2E7D4A;}
+.soc-ig{background:#FCE4EC;color:#c2185b;}
+.soc-fb{background:#E3F2FD;color:#1565C0;}
+.soc-yt{background:#FFEBEE;color:#c62828;}
+/* SOBRE BIO */
+.bio-t{font-size:.86rem;line-height:1.8;color:#555;}
+/* ===== MEU PERFIL (Gabriel Santos) ===== */
+.meu-perfil-capa{background:linear-gradient(135deg,#1a0e08,var(--ma) 40%,var(--mm)
+100%);border-radius:18px;padding:0;overflow:hidden;margin-bottom:20px;position:relative;}
+.capa-img{width:100%;height:180px;object-fit:cover;opacity:.4;}
+.capa-info{padding:0 28px 24px;margin-top:-60px;position:relative;}
+.meu-avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;border:4px solid
+var(--ou);margin-bottom:10px;}
+.meu-nome{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;}
+.meu-sub{font-size:.84rem;color:rgba(255,255,255,.6);margin-top:3px;}
+.meu-actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;}
+.btn-edit-perfil{padding:9px 20px;background:rgba(255,255,255,.12);color:#fff;border:1px
+solid
+rgba(255,255,255,.25);border-radius:50px;font-size:.82rem;font-weight:600;cursor:pointer;ba
+ckdrop-filter:blur(4px);transition:all .2s;}
+.btn-edit-perfil:hover{background:rgba(255,255,255,.22);}
+/* COMPOSIÇÃO REGISTRO */
+
+.comp-upload-area{border:2px dashed
+var(--be);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all
+.2s;margin-bottom:14px;}
+.comp-upload-area:hover{border-color:var(--ou);background:var(--cl);}
+.comp-upload-area svg{width:40px;height:40px;fill:var(--oc);margin-bottom:8px;}
+.comp-upload-area p{font-size:.85rem;color:#888;}
+.comp-lista{display:flex;flex-direction:column;gap:10px;}
+.comp-item{background:#fff;border-radius:11px;padding:14px;display:flex;align-items:center;
+gap:12px;box-shadow:0 1px 6px var(--so);}
+.comp-item-info{flex:1;}
+.comp-item-nome{font-weight:600;font-size:.88rem;color:var(--ma);}
+.comp-item-desc{font-size:.76px;color:#888;margin-top:2px;}
+.comp-actions{display:flex;gap:7px;}
+.btn-pub{background:#E8F7EC;color:#2E7D4A;border:none;border-radius:50px;padding:6px
+14px;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-pub:hover{background:#2E7D4A;color:#fff;}
+.btn-del{background:#FFEBEE;color:var(--vm);border:none;border-radius:50%;width:28px;he
+ight:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all
+.2s;flex-shrink:0;}
+.btn-del:hover{background:var(--vm);color:#fff;}
+/* ===== AGENDA multi-day ===== */
+.agenda-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+.mes{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--ma);text-align:ce
+nter;margin-bottom:12px;}
+.dsem{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.ds{text-align:center;font-size:.66rem;font-weight:600;color:#bbb;padding:3px 0;}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.dc{background:var(--cl);padding:10px
+0;text-align:center;border-radius:8px;font-weight:600;font-size:.8rem;cursor:pointer;transition
+:all .2s;color:var(--ma);user-select:none;}
+.dc:hover{background:var(--be);}
+.dc.ind{background:#FFEBEE;color:var(--vm);text-decoration:line-through;cursor:default;}
+.dc.sel{background:var(--ou);color:#fff;}
+.dc.vazio{background:none;cursor:default;}
+.dias-sel-list{margin-top:12px;font-size:.8rem;color:var(--mm);min-height:18px;}
+.agenda-side{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 8px
+var(--so);}
+.agenda-side
+h4{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--mm);margin-botto
+m:12px;}
+.btn-solicitar{width:100%;padding:12px;background:var(--ou);color:#fff;border:none;border-ra
+dius:50px;font-weight:700;font-size:.88rem;cursor:pointer;transition:all
+.2s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;}
+.btn-solicitar:hover{background:var(--mm);}
+/* ===== CONTRATOS ===== */
+
+.contratos-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24
+px;}
+.cstat{background:#fff;border-radius:var(--rad);padding:18px;box-shadow:0 2px 8px
+var(--so);text-align:center;}
+.cstat-num{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--ou);}
+.cstat-lab{font-size:.76rem;color:#888;margin-top:2px;text-transform:uppercase;letter-spacin
+g:.5px;}
+.cstat-sub{font-size:.72rem;color:var(--vd);margin-top:3px;}
+.contratos-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cont-sec{background:#fff;border-radius:var(--rad);padding:18px;box-shadow:0 2px 8px
+var(--so);}
+.cont-sec
+h3{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;color:var(--mm);margin-bott
+om:14px;display:flex;align-items:center;gap:7px;}
+.cont-item{padding:12px 0;border-bottom:1px solid
+var(--be);display:flex;flex-direction:column;gap:6px;}
+.cont-item:last-child{border-bottom:none;}
+.cont-item-top{display:flex;align-items:center;gap:10px;}
+.cont-item-top img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px
+solid var(--oc);flex-shrink:0;}
+.cont-item-nome{font-weight:600;font-size:.86rem;color:var(--ma);}
+.cont-item-det{font-size:.74px;color:#888;margin-top:2px;}
+.cont-item-val{font-weight:700;color:var(--ou);font-size:.88rem;}
+.cont-status{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:600;pa
+dding:3px 9px;border-radius:20px;}
+.cont-status.ok{background:#E8F7EC;color:#2E7D4A;}
+.cont-status.pend{background:#FFF3E0;color:#E65100;}
+.cont-status.rec{background:#FFEBEE;color:var(--vm);}
+.cont-actions{display:flex;gap:7px;}
+.btn-acc{background:#E8F7EC;color:#2E7D4A;border:none;border-radius:50px;padding:7px
+16px;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-acc:hover{background:#2E7D4A;color:#fff;}
+.btn-rec2{background:#FFEBEE;color:var(--vm);border:none;border-radius:50px;padding:7p
+x 16px;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-rec2:hover{background:var(--vm);color:#fff;}
+/* SOLICITAÇÕES GRAVAÇÃO */
+.grav-item{background:var(--cl);border-radius:11px;padding:13px;margin-bottom:10px;border
+-left:3px solid #7B1FA2;}
+.grav-item-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.grav-tipo{background:#F3E5F5;color:#7B1FA2;font-size:.68rem;font-weight:700;padding:3p
+x 9px;border-radius:20px;text-transform:uppercase;}
+.grav-nome{font-weight:600;font-size:.86rem;color:var(--ma);}
+.grav-comp{font-size:.78rem;color:var(--ou);font-style:italic;margin-bottom:4px;}
+.grav-msg{font-size:.8rem;color:#666;line-height:1.5;margin-bottom:8px;}
+/* ===== CHAT ===== */
+
+.chat-layout{display:grid;grid-template-columns:270px 1fr;height:calc(100vh - var(--header) -
+56px);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px var(--so);}
+.chat-list{background:#fff;border-right:1px solid
+var(--be);overflow-y:auto;display:flex;flex-direction:column;}
+.chat-list-h{padding:16px
+14px;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--mm);border-bott
+om:1px solid var(--be);flex-shrink:0;}
+.chat-req-banner{background:#FFF3E0;border-bottom:1px solid #FFE082;padding:10px
+14px;font-size:.76rem;color:#795548;display:flex;align-items:center;gap:7px;}
+.chat-req-banner svg{width:14px;height:14px;fill:#E65100;flex-shrink:0;}
+.chat-list-item{display:flex;align-items:center;gap:10px;padding:12px
+14px;cursor:pointer;transition:background .2s;border-bottom:1px solid #f8f4f0;flex-shrink:0;}
+.chat-list-item:hover,.chat-list-item.on{background:var(--cl);}
+.chat-list-item img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px
+solid var(--oc);}
+.cli-nome{font-size:.85rem;font-weight:600;color:var(--ma);}
+
+.cli-ult{font-size:.73rem;color:#aaa;margin-top:1px;white-space:nowrap;overflow:hidden;text-
+overflow:ellipsis;max-width:130px;}
+
+.cli-status{font-size:.65rem;font-weight:600;padding:2px 7px;border-radius:20px;}
+.cli-status.pend{background:#FFF3E0;color:#E65100;}
+.cli-status.ativo{background:#E8F7EC;color:#2E7D4A;}
+.chat-main{background:var(--cr);display:flex;flex-direction:column;}
+.chat-h{display:flex;align-items:center;gap:11px;padding:14px 18px;background:var(--mm);}
+.chat-ha{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid
+var(--oc);}
+.chat-hn{color:#fff;font-weight:600;font-size:.92rem;font-family:'Syne',sans-serif;}
+.chat-hs{color:rgba(255,255,255,.5);font-size:.74rem;}
+.chat-req-bar{background:#FFF3E0;padding:10px
+18px;display:flex;align-items:center;justify-content:space-between;font-size:.8rem;color:#795
+548;gap:10px;}
+.chat-req-bar-btns{display:flex;gap:7px;}
+.chat-msgs{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1;overflow-y:auto;}
+.msg{max-width:62%;border-radius:16px;padding:10px
+14px;font-size:.84rem;line-height:1.58;}
+.msg.deles{background:#fff;border:1px solid
+var(--be);color:var(--ma);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg.minha{background:var(--ou);color:#fff;align-self:flex-end;border-bottom-right-radius:4px
+;}
+.msg-time{font-size:.66rem;opacity:.6;display:block;margin-top:3px;}
+.msg-proposta{background:#fff;border:2px solid
+var(--ou);border-radius:15px;padding:14px;max-width:62%;align-self:flex-start;}
+.prop-val{font-size:1.3rem;font-weight:700;color:var(--ou);font-family:'Syne',sans-serif;}
+.prop-det{font-size:.76rem;color:#888;margin:4px 0 10px;}
+.btn-pagar{width:100%;padding:10px;background:var(--vd);color:#fff;border:none;border-radi
+us:50px;font-weight:700;font-size:.86rem;cursor:pointer;}
+.chat-input-area{padding:12px 18px;background:var(--cl);border-top:1px solid
+var(--be);display:flex;gap:8px;align-items:flex-end;}
+
+.chat-input{flex:1;padding:10px 14px;border:1.5px solid
+var(--be);border-radius:50px;background:#fff;font-size:.86rem;color:var(--ma);outline:none;re
+size:none;max-height:80px;}
+.chat-input:focus{border-color:var(--oc);}
+.btn-send{width:40px;height:40px;border-radius:50%;background:var(--ou);border:none;curs
+or:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.btn-send:hover{background:var(--ma);}
+.btn-send svg{width:16px;height:16px;fill:#fff;}
+.btn-proposta{padding:8px
+14px;background:var(--ou);color:#fff;border:none;border-radius:50px;font-weight:600;font-siz
+e:.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.alerta-fuga{background:#FFF3E0;border:1px solid var(--oc);border-radius:9px;padding:8px
+14px;font-size:.74rem;color:var(--mm);margin:0 18px 8px;text-align:center;display:none;}
+/* ===== FAVORITOS ===== */
+.fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;}
+.fav-card{background:#fff;border-radius:var(--rad);overflow:hidden;box-shadow:0 2px 8px
+var(--so);cursor:pointer;transition:all .25s;}
+.fav-card:hover{transform:translateY(-2px);}
+.fav-img-wrap{position:relative;}
+.fav-img-wrap img{width:100%;height:130px;object-fit:cover;}
+.fav-remove{position:absolute;top:7px;right:7px;width:26px;height:26px;background:rgba(20
+4,51,51,.82);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;jus
+tify-content:center;}
+.fav-remove svg{width:13px;height:13px;fill:#fff;}
+.fav-body{padding:12px;}
+.fav-nome{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--ma);margi
+n-bottom:3px;}
+.fav-info{font-size:.76rem;color:#888;}
+/* ===== SOLOAI CHAT ===== */
+.soloai-chat-layout{display:flex;flex-direction:column;height:calc(100vh - var(--header) -
+56px);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px
+var(--so);}
+.soloai-chat-header{background:linear-gradient(135deg,#001a33,#003366);padding:18px
+22px;display:flex;align-items:center;gap:14px;}
+.soloai-icon{width:44px;height:44px;border-radius:50%;background:rgba(0,191,255,.15);bord
+er:2px solid var(--blue);display:flex;align-items:center;justify-content:center;}
+.soloai-icon svg{width:24px;height:24px;fill:var(--blue);}
+.soloai-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;}
+.soloai-sub{font-size:.76rem;color:rgba(0,191,255,.7);}
+.soloai-msgs{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+background:#f8fafd;}
+.smsg{max-width:70%;border-radius:16px;padding:12px
+16px;font-size:.86rem;line-height:1.6;}
+.smsg.ai{background:#fff;border:1px solid
+#e0e8f0;color:var(--ma);align-self:flex-start;border-bottom-left-radius:4px;box-shadow:0 2px
+6px rgba(0,0,0,.05);}
+
+.smsg.user{background:var(--blue2);color:#fff;align-self:flex-end;border-bottom-right-radius:4
+px;}
+.smsg-loading{display:flex;gap:5px;align-items:center;padding:14px 16px;}
+.smsg-loading
+span{width:7px;height:7px;background:#ccc;border-radius:50%;animation:pulse 1.2s
+infinite;}
+.smsg-loading span:nth-child(2){animation-delay:.2s;}
+.smsg-loading span:nth-child(3){animation-delay:.4s;}
+@keyframes
+pulse{0%,60%,100%{transform:scale(1);opacity:.5}30%{transform:scale(1.3);opacity:1}}
+.soloai-input-area{padding:14px 18px;background:#fff;border-top:1px solid
+var(--be);display:flex;gap:9px;align-items:flex-end;}
+.soloai-input{flex:1;padding:11px 16px;border:1.5px solid
+var(--be);border-radius:50px;font-size:.86rem;color:var(--ma);outline:none;resize:none;max-h
+eight:80px;}
+.soloai-input:focus{border-color:var(--blue);}
+.soloai-send{width:40px;height:40px;border-radius:50%;background:var(--blue2);border:non
+e;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.soloai-send svg{width:16px;height:16px;fill:#fff;}
+.soloai-suggestions{display:flex;gap:8px;padding:0 18px 12px;flex-wrap:wrap;}
+.sug{padding:7px 13px;background:var(--cl);border:1px solid
+var(--be);border-radius:50px;font-size:.76rem;color:var(--mm);cursor:pointer;transition:all
+.2s;}
+.sug:hover{background:var(--be);}
+/* ===== CONFIG ===== */
+.config-layout{display:grid;grid-template-columns:200px 1fr;gap:20px;}
+.config-nav{background:#fff;border-radius:var(--rad);padding:10px 0;box-shadow:0 2px 8px
+var(--so);height:fit-content;}
+.config-nav-item{padding:10px
+18px;font-size:.84rem;color:var(--mm);cursor:pointer;transition:background
+.2s;border-left:3px solid transparent;}
+.config-nav-item:hover{background:var(--cl);}
+.config-nav-item.on{background:var(--cl);color:var(--ou);border-left-color:var(--ou);font-weight
+:600;}
+.config-panel{background:#fff;border-radius:var(--rad);padding:24px;box-shadow:0 2px 8px
+var(--so);}
+.config-panel
+h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--mm);margin-botto
+m:18px;padding-bottom:12px;border-bottom:1px solid var(--be);}
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:13px
+0;border-bottom:1px solid var(--be);}
+.config-row:last-child{border-bottom:none;}
+.config-label{font-size:.86rem;font-weight:500;color:var(--ma);}
+.config-desc{font-size:.74rem;color:#aaa;margin-top:2px;}
+.toggle{width:42px;height:22px;background:var(--be);border-radius:50px;position:relative;cur
+sor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--ou);}
+
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radiu
+s:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.toggle.on::after{transform:translateX(20px);}
+.config-select{padding:7px 11px;border:1.5px solid
+var(--be);border-radius:8px;font-size:.83rem;color:var(--ma);background:var(--cl);outline:non
+e;cursor:pointer;}
+.config-input{padding:8px 12px;border:1.5px solid
+var(--be);border-radius:8px;font-size:.83rem;color:var(--ma);background:var(--cl);outline:non
+e;width:200px;}
+.config-input:focus{border-color:var(--oc);}
+.btn-config-save{margin-top:18px;padding:10px
+26px;background:var(--ou);color:#fff;border:none;border-radius:50px;font-weight:700;font-siz
+e:.86rem;cursor:pointer;transition:all .2s;}
+.btn-config-save:hover{background:var(--mm);}
+.tipo-conta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;}
+.tipo-opt{padding:14px;border:2px solid
+var(--be);border-radius:11px;cursor:pointer;text-align:center;transition:all .2s;}
+.tipo-opt:hover{border-color:var(--oc);}
+.tipo-opt.on{border-color:var(--ou);background:var(--cl);}
+.tipo-opt-icon{font-size:1.5rem;margin-bottom:5px;}
+.tipo-opt-t{font-size:.82rem;font-weight:600;color:var(--ma);}
+.tipo-opt-s{font-size:.7rem;color:#888;margin-top:2px;}
+.danger-zone{margin-top:20px;padding:18px;background:#FFF5F5;border:1px solid
+#FFCDD2;border-radius:11px;}
+.danger-zone h4{color:var(--vm);font-size:.88rem;font-weight:700;margin-bottom:10px;}
+.btn-danger{padding:8px
+18px;background:#FFEBEE;color:var(--vm);border:none;border-radius:50px;font-size:.8rem;f
+ont-weight:600;cursor:pointer;margin-right:8px;}
+.btn-danger:hover{background:var(--vm);color:#fff;}
+/* ===== MODALS ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(3px);z-in
+dex:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;t
+ransition:opacity .25s;}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:460px;width:90%;positio
+n:relative;transform:scale(.96) translateY(8px);transition:transform
+.25s;max-height:88vh;overflow-y:auto;}
+.modal-overlay.show .modal{transform:none;}
+.modal
+h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--ma);margin-botto
+m:6px;}
+.modal p{font-size:.86rem;color:#777;margin-bottom:18px;line-height:1.65;}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50
+%;background:var(--cl);border:none;cursor:pointer;font-size:.95rem;color:var(--mm);display:fl
+ex;align-items:center;justify-content:center;}
+.modal-form{display:flex;flex-direction:column;gap:12px;}
+
+.modal-field
+label{display:block;font-size:.78rem;font-weight:600;color:var(--mm);margin-bottom:4px;}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px
+13px;border:1.5px solid
+var(--be);border-radius:9px;font-size:.85rem;color:var(--ma);background:var(--cl);outline:non
+e;transition:border-color .2s;}
+.modal-field input:focus,.modal-field select:focus,.modal-field
+textarea:focus{border-color:var(--oc);}
+.modal-field textarea{resize:vertical;min-height:70px;}
+.modal-field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-btn{width:100%;padding:12px;background:var(--ou);color:#fff;border:none;border-radi
+us:50px;font-weight:700;font-size:.9rem;cursor:pointer;margin-top:4px;transition:all .2s;}
+.modal-btn:hover{background:var(--mm);}
+.modal-btn-sec{background:var(--cl);color:var(--mm);}
+.modal-btn-sec:hover{background:var(--be);}
+.gravar-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.gravar-opt{padding:14px;border:2px solid
+var(--be);border-radius:11px;cursor:pointer;text-align:center;transition:all .2s;}
+.gravar-opt:hover,.gravar-opt.on{border-color:var(--ou);background:var(--cl);}
+.gravar-opt svg{width:26px;height:26px;fill:var(--ou);margin:0 auto 7px;display:block;}
+.gravar-opt-t{font-size:.82rem;font-weight:600;color:var(--ma);}
+.gravar-opt-s{font-size:.7rem;color:#888;margin-top:2px;}
+/* SUB */
+.sub-hero{background:linear-gradient(135deg,var(--ma),var(--mm));border-radius:14px;paddi
+ng:24px;text-align:center;margin-bottom:20px;}
+.sub-hero
+h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:5px
+;}
+.sub-hero p{color:rgba(255,255,255,.6);font-size:.83rem;margin-bottom:0;}
+.sub-price{text-align:center;margin-bottom:18px;}
+.sub-price
+.price{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--ou);}
+.sub-price .period{font-size:.86rem;color:#888;}
+.sub-features{margin-bottom:20px;}
+.sub-feature{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--mm);padding
+:5px 0;}
+.sub-feature svg{width:16px;height:16px;fill:var(--vd);flex-shrink:0;}
+/* POST MODAL */
+.post-type-row{display:flex;gap:8px;margin-bottom:14px;}
+.post-type-btn{flex:1;padding:10px;border:2px solid
+var(--be);border-radius:10px;font-size:.8rem;font-weight:600;color:var(--mm);cursor:pointer;b
+ackground:none;transition:all .2s;text-align:center;}
+.post-type-btn.on{border-color:var(--ou);background:var(--cl);color:var(--ou);}
+.upload-area{border:2px dashed
+var(--be);border-radius:11px;padding:20px;text-align:center;cursor:pointer;transition:all
+.2s;margin-bottom:10px;}
+
+.upload-area:hover{border-color:var(--ou);background:var(--cl);}
+.upload-area svg{width:32px;height:32px;fill:var(--oc);margin-bottom:6px;}
+.upload-area p{font-size:.8rem;color:#888;}
+/* TOAST */
+.toast{position:fixed;top:72px;right:24px;background:var(--ma);color:#fff;padding:10px
+20px;border-radius:50px;font-size:.82rem;font-weight:600;z-index:9999;opacity:0;pointer-eve
+nts:none;transition:all .3s;transform:translateY(-6px);}
+.toast.show{opacity:1;transform:none;}
+/* SOLICITAR CHAT */
+.artistas-req-list{display:flex;flex-direction:column;gap:10px;}
+.req-item{display:flex;align-items:center;gap:11px;background:var(--cl);border-radius:11px;pa
+dding:12px;}
+.req-item img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid
+var(--oc);}
+.req-item-info{flex:1;}
+.req-item-nome{font-weight:600;font-size:.86rem;color:var(--ma);}
+.req-item-det{font-size:.74rem;color:#888;margin-top:1px;}
+.req-item-actions{display:flex;gap:7px;}
+/* BUSCA CONTRATANTE */
+.search-result-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.search-res-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:11px
+;padding:13px;box-shadow:0 1px 6px var(--so);}
+.search-res-item img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px
+solid var(--oc);}
+.search-res-info{flex:1;}
+.search-res-nome{font-weight:600;font-size:.88rem;color:var(--ma);}
+.search-res-det{font-size:.76px;color:#888;margin-top:2px;}
+</style>
+</head>
+<body>
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+<div class="sidebar-logo">
+<div class="logo-a">
+<div class="logo-i"><svg viewBox="0 0 24 24"><path d="M12 3C10.34 3 9 4.34 9
+6v8.27A4 4 0 1 0 13 18V8h4V6c0-1.66-1.34-3-3-3H9v2h3Z"/></svg></div>
+<span class="logo-n">SOLODASH</span>
+</div>
+</div>
+<div class="sidebar-nav">
+<div class="nav-item on" id="nb-home" onclick="ir('home')">
+<svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2
+12h3v8z"/></svg><span>Início</span>
+</div>
+
+<div class="nav-item" id="nb-meu-perfil" onclick="abrirMeuPerfil()">
+<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4
+1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Meu
+Perfil</span>
+</div>
+<div class="nav-item" id="nb-chat" onclick="ir('chat')">
+<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9
+2-2V4c0-1.1-.9-2-2-2z"/></svg><span>Mensagens</span>
+<span class="nav-dot" id="notif-chat"></span>
+</div>
+<div class="nav-item" id="nb-contratos" onclick="ir('contratos')">
+<svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2
+1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5
+9H13z"/></svg><span>Contratos</span>
+<span class="nav-badge" id="cont-badge">3</span>
+</div>
+<div class="nav-item" id="nb-favoritos" onclick="ir('favoritos')">
+<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2
+5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22
+8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>Favoritos</span>
+</div>
+<div class="nav-item soloai-item" id="nb-soloai" onclick="ir('soloai')">
+<div class="soloai-glow"></div>
+<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1
+0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12
+13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15
+12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+<span class="nav-label">SoloAI</span>
+</div>
+<div class="nav-item" id="nb-buscar" onclick="ir('buscar')">
+<svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16
+9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59
+4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14
+7.01 14 9.5 11.99 14 9.5 14z"/></svg><span>Buscar Pessoas</span>
+</div>
+<div class="nav-item" id="nb-config" onclick="ir('config')">
+<svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94
+0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.3
+9.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24
+0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74
+8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03
+1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36
+2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56
+1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12
+15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6
+3.6z"/></svg><span>Configurações</span>
+</div>
+</div>
+
+<div class="sidebar-footer">
+<div class="sub-badge" onclick="abrirAssinatura()" id="sub-badge">
+<div class="sub-badge-t">✨ Assine o Premium</div>
+<div class="sub-badge-s">R$ 4,99/mês — Acesso total</div>
+</div>
+</div>
+</nav>
+<!-- FAB POST (apenas artistas) -->
+<button class="fab-post" id="fab-post" onclick="abrirModal('modal-post')" title="Nova
+Publicação">
+<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+</button>
+<!-- ===== MAIN ===== -->
+<div class="main">
+<div class="header">
+<div class="header-search">
+<input class="busca-i" type="text" placeholder="Buscar artistas, estilos, cidades..."
+id="busca-inp" oninput="filtrarArtistas(this.value)">
+</div>
+<div class="header-right">
+<button class="h-btn" title="Notificações"><svg viewBox="0 0 24 24"><path d="M12
+22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2
+2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64
+5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><div class="badge-notif"></div></button>
+<img src="https://i.pravatar.cc/100?img=12" class="h-avatar" alt="Eu"
+onclick="abrirMeuPerfil()">
+</div>
+</div>
+<!-- ===== HOME ===== -->
+<div id="t-home" class="page ativa fade-in">
+<div class="home-hero">
+<h1>O artista certo<br>para o seu evento</h1>
+<p>Conectamos você com os melhores talentos do Brasil</p>
+<div class="hero-search">
+<input type="text" placeholder="Buscar artistas, estilos, cidades...">
+<button class="hero-btn">Buscar</button>
+</div>
+</div>
+<div class="filtros-row">
+<span class="chip on" onclick="filtroChip(this,'Todos')">Todos</span>
+<span class="chip" onclick="filtroChip(this,'Gospel')">Gospel</span>
+<span class="chip" onclick="filtroChip(this,'Sertanejo')">Sertanejo</span>
+<span class="chip" onclick="filtroChip(this,'MPB')">MPB</span>
+<span class="chip" onclick="filtroChip(this,'Pagode')">Pagode</span>
+<span class="chip" onclick="filtroChip(this,'Forró')">Forró</span>
+
+<span class="chip" onclick="filtroChip(this,'Pop')">Pop</span>
+</div>
+<div class="st">Estilos Musicais</div>
+<div class="estilos-grid" style="margin-bottom:24px;">
+<div class="ec"><img src="https://picsum.photos/200/100?random=46"
+alt="Gospel"><span>Gospel</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=47"
+alt="Sertanejo"><span>Sertanejo</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=48"
+alt="MPB"><span>MPB</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=53"
+alt="Pagode"><span>Pagode</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=74"
+alt="Forró"><span>Forró</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=75"
+alt="Pop"><span>Pop</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=76"
+alt="Jazz"><span>Jazz</span></div>
+<div class="ec"><img src="https://picsum.photos/200/100?random=77"
+alt="Funk"><span>Funk</span></div>
+</div>
+<div class="st">Em Alta esta Semana</div>
+<div class="artists-grid" id="posts-container"></div>
+</div>
+<!-- ===== PERFIL 3RD PARTY ===== -->
+<div id="t-perfil" class="page fade-in">
+<div style="margin-bottom:18px;">
+<button class="ba bc" onclick="ir('home')" style="font-size:.83rem;padding:8px 16px;">←
+Voltar</button>
+</div>
+<div class="perfil-header">
+<img id="p-foto" src="" class="pfoto" alt="">
+<div style="flex:1;">
+<div class="pnome" id="p-nome"></div>
+<div class="tags">
+<span class="tag"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0
+5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5
+2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5Z"/></svg><span id="p-cidade"></span></span>
+<span class="tag"><svg viewBox="0 0 24 24"><path d="M12 3C10.34 3 9 4.34 9
+6v8.27A4 4 0 1 0 13 18V8h4V6c0-1.66-1.34-3-3-3H9v2h3Z"/></svg><span
+id="p-estilo"></span></span>
+<span class="tag"><svg viewBox="0 0 24 24"><path d="M12 17.27 18.18
+21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><span
+id="p-nota-tag"></span></span>
+</div>
+<div class="nota-row">
+<div class="nota" id="p-nota"></div>
+
+<div><div class="stars">★★★★★</div><div class="ntt" id="p-navals"></div></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+<button class="ba btn-fav" onclick="toggleFavorito()"
+style="font-size:.82rem;padding:9px 16px;"><svg viewBox="0 0 24 24"><path d="M12
+21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09
+3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+Favoritar</button>
+<button class="ba bc" onclick="solicitarChat()" style="font-size:.82rem;padding:9px
+16px;"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9
+2-2V4c0-1.1-.9-2-2-2z"/></svg> Solicitar Chat</button>
+</div>
+</div>
+<div class="tabs">
+<button class="tab on" onclick="aba('faixas',this)">🎵 Faixas</button>
+<button class="tab" onclick="aba('sobre',this)">Sobre</button>
+<button class="tab" onclick="aba('participacoes',this)">Participações</button>
+<button class="tab" onclick="aba('novidades',this)">Novidades</button>
+<button class="tab" onclick="aba('composicoes',this)">Composições</button>
+<button class="tab" onclick="aba('agenda',this)">Agenda</button>
+<button class="tab" onclick="aba('social',this)">Redes</button>
+</div>
+<div id="aba-faixas" class="aba on"><div class="faixas-list" id="faixas-list"></div></div>
+<div id="aba-sobre" class="aba"><p class="bio-t" id="p-bio-full" style="padding:4px
+0;"></p></div>
+<div id="aba-participacoes" class="aba"><div id="participacoes-list"></div></div>
+<div id="aba-novidades" class="aba"><div class="novidades-grid"
+id="novidades-list"></div></div>
+<div id="aba-composicoes" class="aba">
+<div style="margin-bottom:12px;padding:10px
+13px;background:#FFF3E0;border-radius:10px;font-size:.8rem;color:#795548;">🎼
+Composições protegidas por direito autoral. Clique em "Gravar" para enviar proposta ao
+artista.</div>
+<div id="comp-list-ext"></div>
+</div>
+<div id="aba-agenda" class="aba">
+<div class="agenda-layout">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<div class="mes">Novembro 2024</div>
+<div class="dsem"><div class="ds">Dom</div><div class="ds">Seg</div><div
+class="ds">Ter</div><div class="ds">Qua</div><div class="ds">Qui</div><div
+class="ds">Sex</div><div class="ds">Sáb</div></div>
+<div class="calg" id="cal-grid"></div>
+<div class="dias-sel-list" id="dias-sel-txt">Clique para selecionar múltiplos dias</div>
+</div>
+<div class="agenda-side">
+
+<h4>📅 Solicitar Data(s)</h4>
+<p style="font-size:.8rem;color:#888;line-height:1.6;">Selecione um ou mais dias
+disponíveis. Sua solicitação será enviada ao artista para aprovação.</p>
+<div id="dias-sel-resumo"
+style="margin-top:10px;padding:10px;background:var(--cl);border-radius:9px;font-size:.8rem;
+color:var(--mm);min-height:40px;"></div>
+<div class="modal-field" style="margin-top:10px;">
+<label>Mensagem (opcional)</label>
+<textarea id="agenda-msg" rows="2" placeholder="Descreva o
+evento..."></textarea>
+</div>
+<button class="btn-solicitar" onclick="enviarSolicitacaoAgenda()"><svg viewBox="0 0
+24 24" style="width:16px;height:16px;fill:#fff;"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15
+2z"/></svg> Enviar Solicitação</button>
+</div>
+</div>
+</div>
+<div id="aba-social" class="aba">
+<div style="margin-bottom:16px;">
+<h4
+
+style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--mm);margin-
+bottom:12px;">Redes Sociais & Contato</h4>
+
+<div class="social-grid" id="social-links"></div>
+</div>
+</div>
+</div>
+<!-- ===== MEU PERFIL ===== -->
+<div id="t-meu-perfil" class="page fade-in">
+<div class="meu-perfil-capa">
+<img src="https://picsum.photos/1200/300?random=200" class="capa-img" alt="">
+<div class="capa-info">
+<img src="https://i.pravatar.cc/150?img=12" class="meu-avatar" alt="Gabriel Santos"
+id="meu-avatar-img">
+<div class="meu-nome">Gabriel Santos</div>
+<div class="meu-sub" id="meu-sub-txt">Contratante · Brasília, DF</div>
+<div class="meu-actions">
+<button class="btn-edit-perfil" onclick="abrirModal('modal-edit-perfil')">✏️ Editar
+Perfil</button>
+<button class="btn-edit-perfil" onclick="ir('config')">⚙️ Configurações</button>
+</div>
+</div>
+</div>
+<div id="meu-perfil-tabs-wrap">
+<div class="tabs" id="meu-tabs">
+<button class="tab on" onclick="abaMe('me-sobre',this)">Sobre</button>
+<button class="tab" id="tab-faixas-me"
+onclick="abaMe('me-faixas',this)">Faixas</button>
+
+<button class="tab" id="tab-comp-me"
+onclick="abaMe('me-composicoes',this)">Composições</button>
+<button class="tab" id="tab-agenda-me"
+onclick="abaMe('me-agenda',this)">Agenda</button>
+<button class="tab" onclick="abaMe('me-participacoes',this)">Participações</button>
+<button class="tab" onclick="abaMe('me-novidades',this)">Novidades</button>
+</div>
+<div id="me-sobre" class="aba on">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<h4
+
+style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--mm);margin-
+bottom:10px;">Sobre Mim</h4>
+
+<p class="bio-t" id="me-bio-txt">Produtor e contratante de eventos em Brasília.
+Apaixonado por música gospel e sertanejo, sempre em busca dos melhores artistas para
+eventos únicos.</p>
+</div>
+</div>
+<div id="me-faixas" class="aba">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<p style="font-size:.86rem;color:#888;text-align:center;padding:20px 0;">Você é
+contratante. Configure sua conta como artista para ter faixas.</p>
+</div>
+</div>
+<div id="me-composicoes" class="aba">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<div
+style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+<h4
+style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--mm);">Minha
+s Composições</h4>
+<button class="ba bc" onclick="abrirModal('modal-new-comp')"
+style="font-size:.8rem;"><svg viewBox="0 0 24 24" style="width:13px;height:13px;"><path
+d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Registrar</button>
+</div>
+<div class="comp-lista" id="me-comp-lista">
+<div style="text-align:center;padding:20px;color:#aaa;font-size:.86rem;">Você é
+contratante. Configure sua conta como artista para registrar composições.</div>
+</div>
+</div>
+</div>
+<div id="me-agenda" class="aba">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<p style="font-size:.86rem;color:#888;text-align:center;padding:20px 0;">Você é
+contratante. Configure sua conta como artista para ter agenda de disponibilidade.</p>
+
+</div>
+</div>
+<div id="me-participacoes" class="aba">
+<div id="me-part-list">
+<div class="part-card">
+<div class="part-loc"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5
+9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5c-1.38
+0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5Z"/></svg> Arena BSB,
+Brasília - DF</div>
+<img src="https://picsum.photos/700/220?random=300" class="part-img"
+alt="Show">
+<div class="part-body"><div class="part-nome">Festival Gospel BSB 2024</div><div
+class="part-desc">Que noite incrível! Gratidão pela oportunidade de fazer parte desse
+evento histórico. Obrigado a todos que compareceram e tornaram essa noite especial.
+🙏🎶</div></div>
+</div>
+</div>
+</div>
+<div id="me-novidades" class="aba">
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);">
+<div class="novidades-grid">
+<div class="nov-card"><img src="https://picsum.photos/300/150?random=400"
+class="nov-img" alt=""><div class="nov-body"><div class="nov-tit">Novo contrato
+fechado</div><div class="nov-det">O empresário Gabriel acaba de elaborar evento com
+participação de Thalles Roberto e Gabriela Rocha no Mané Garrincha</div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ===== CHAT ===== -->
+<div id="t-chat" class="page fade-in" style="padding:28px;">
+<div class="page-header" style="margin-bottom:16px;">
+<div><div class="page-title">Mensagens</div><div class="page-sub">Negocie
+diretamente com artistas</div></div>
+</div>
+<div class="chat-layout">
+<div class="chat-list">
+<div class="chat-list-h">Conversas</div>
+<div class="chat-req-banner"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2
+6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1
+15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Solicite chat para iniciar conversa com
+contratantes/artistas.</div>
+<div id="chat-list-items">
+<div class="chat-list-item on">
+
+<img src="https://i.pravatar.cc/100?img=11" alt=""><div
+style="flex:1;min-width:0;"><div class="cli-nome">Joelson &amp; Ademilton</div><div
+class="cli-ult">Ótimo! Confirmo para sábado...</div></div><span class="cli-status
+ativo">Ativo</span>
+</div>
+<div class="chat-list-item">
+<img src="https://i.pravatar.cc/100?img=22" alt=""><div
+style="flex:1;min-width:0;"><div class="cli-nome">Henrique &amp; Juliano</div><div
+class="cli-ult">Qual o valor disponível?</div></div><span class="cli-status
+pend">Pend.</span>
+</div>
+<div class="chat-list-item">
+<img src="https://i.pravatar.cc/100?img=33" alt=""><div
+style="flex:1;min-width:0;"><div class="cli-nome">Fernanda Brum</div><div
+class="cli-ult">Posso confirmar para o 15?</div></div><span class="cli-status
+ativo">Ativo</span>
+</div>
+</div>
+</div>
+<div class="chat-main">
+<div class="chat-h">
+<img src="https://i.pravatar.cc/100?img=11" class="chat-ha" id="chat-avatar" alt="">
+<div>
+<div class="chat-hn" id="chat-nome-h">Joelson &amp; Ademilton</div>
+<div class="chat-hs">Online agora · Responde em ~15 min</div>
+</div>
+</div>
+<div id="alerta-fuga" class="alerta-fuga">⚠️ Troca de contatos detectada. Finalize a
+reserva aqui para garantir sua proteção.</div>
+<div class="chat-msgs" id="chat-msgs">
+<div class="msg deles">Olá! Vi que você tem interesse em contratar. Como posso
+ajudar?<span class="msg-time">09:12</span></div>
+</div>
+<div class="chat-input-area">
+<textarea class="chat-input" id="chat-inp" rows="1" placeholder="Escreva sua
+mensagem..."></textarea>
+<button class="btn-proposta" id="btn-prop" onclick="enviarProposta()">📋
+Proposta</button>
+<button class="btn-send" onclick="enviarMsg()"><svg viewBox="0 0 24 24"><path
+d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+</div>
+</div>
+</div>
+</div>
+<!-- ===== CONTRATOS ===== -->
+<div id="t-contratos" class="page fade-in">
+<div class="page-header">
+
+<div><div class="page-title">Contratos</div><div class="page-sub">Gerencie contratos
+e solicitações</div></div>
+</div>
+<div class="contratos-stats">
+<div class="cstat"><div class="cstat-num" id="cont-fechados">12</div><div
+class="cstat-lab">Fechados</div><div class="cstat-sub">+3 este mês</div></div>
+<div class="cstat"><div class="cstat-num" id="cont-pendentes"
+style="color:#E65100;">3</div><div class="cstat-lab">Pendentes</div><div
+class="cstat-sub">Aguardando resposta</div></div>
+<div class="cstat"><div class="cstat-num" id="cont-grav"
+style="color:#7B1FA2;">5</div><div class="cstat-lab">Sol. Gravação</div><div
+class="cstat-sub">Composições</div></div>
+</div>
+<div class="contratos-grid">
+<div class="cont-sec">
+<h3>📝 Contratos Fechados</h3>
+<div id="contratos-fechados-list">
+<div class="cont-item">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=11"
+alt=""><div><div class="cont-item-nome">Joelson &amp; Ademilton</div><div
+class="cont-item-det" style="font-size:.76rem;color:#888;">Gospel · 15 Nov · Arena
+BSB</div></div><div style="margin-left:auto;text-align:right;"><div class="cont-item-val">R$
+1.400</div><span class="cont-status ok">✓ Concluído</span></div></div>
+</div>
+<div class="cont-item">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=33"
+alt=""><div><div class="cont-item-nome">Fernanda Brum</div><div class="cont-item-det"
+style="font-size:.76rem;color:#888;">Gospel · 22 Out · Igreja Central</div></div><div
+style="margin-left:auto;text-align:right;"><div class="cont-item-val">R$ 3.200</div><span
+class="cont-status ok">✓ Concluído</span></div></div>
+</div>
+<div class="cont-item">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=55"
+alt=""><div><div class="cont-item-nome">Henrique &amp; Juliano</div><div
+class="cont-item-det" style="font-size:.76rem;color:#888;">Sertanejo · 08 Out · Fazenda
+Estrela</div></div><div style="margin-left:auto;text-align:right;"><div
+class="cont-item-val">R$ 4.500</div><span class="cont-status ok">✓
+Concluído</span></div></div>
+</div>
+</div>
+</div>
+<div class="cont-sec">
+<h3>⏳ Contratos Pendentes</h3>
+<div id="contratos-pend-list">
+<div class="cont-item" id="cpend-1">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=44"
+alt=""><div><div class="cont-item-nome">Aline Barros</div><div class="cont-item-det"
+style="font-size:.76rem;color:#888;">Gospel · 20 Dez · Conf. Louvor</div></div><div
+
+style="margin-left:auto;text-align:right;"><div class="cont-item-val">R$ 2.800</div><span
+class="cont-status pend">⏳ Aguardando</span></div></div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarContrato('cpend-1','Aline Barros')">✓ Aceitar</button><button
+class="btn-rec2" onclick="recusarContrato('cpend-1')">✕ Recusar</button></div>
+</div>
+<div class="cont-item" id="cpend-2">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=66"
+alt=""><div><div class="cont-item-nome">Padre Fábio de Melo</div><div
+class="cont-item-det" style="font-size:.76rem;color:#888;">MPB/Gospel · 18 Jan · Teatro
+Nac.</div></div><div style="margin-left:auto;text-align:right;"><div class="cont-item-val">R$
+8.000</div><span class="cont-status pend">⏳ Aguardando</span></div></div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarContrato('cpend-2','Padre Fábio')">✓ Aceitar</button><button
+class="btn-rec2" onclick="recusarContrato('cpend-2')">✕ Recusar</button></div>
+</div>
+<div class="cont-item" id="cpend-3">
+<div class="cont-item-top"><img src="https://i.pravatar.cc/100?img=77"
+alt=""><div><div class="cont-item-nome">Péricles</div><div class="cont-item-det"
+style="font-size:.76rem;color:#888;">Pagode · 14 Fev · Clube Iate</div></div><div
+style="margin-left:auto;text-align:right;"><div class="cont-item-val">R$ 5.500</div><span
+class="cont-status pend">⏳ Aguardando</span></div></div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarContrato('cpend-3','Péricles')">✓ Aceitar</button><button class="btn-rec2"
+onclick="recusarContrato('cpend-3')">✕ Recusar</button></div>
+</div>
+</div>
+</div>
+<div class="cont-sec" style="grid-column:1/-1;">
+<h3>🎙 Solicitações de Gravação</h3>
+<div id="grav-sol-list">
+<div class="grav-item" id="gsol-1">
+<div class="grav-item-top"><img src="https://i.pravatar.cc/60?img=32"
+style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--oc);"
+alt=""><div style="flex:1;"><div class="grav-nome">Studio Nave Record</div><div
+class="grav-comp">📀 "Grande És" — Composição</div></div><span
+class="grav-tipo">Gravadora</span></div>
+<div class="grav-msg">"Temos interesse em produzir este single para lançamento
+nacional em 2025. Podemos agendar uma reunião para discutir os termos e direitos
+autorais?"</div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarGrav('gsol-1','Studio Nave')">✓ Aceitar</button><button class="btn-rec2"
+onclick="recusarGrav('gsol-1')">✕ Recusar</button></div>
+</div>
+<div class="grav-item" id="gsol-2">
+<div class="grav-item-top"><img src="https://i.pravatar.cc/60?img=45"
+style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--oc);"
+alt=""><div style="flex:1;"><div class="grav-nome">Paulo Henrique</div><div
+
+class="grav-comp">📀 "Rio de Deus" — Composição</div></div><span class="grav-tipo"
+style="background:#E3F2FD;color:#1565C0;">Artista</span></div>
+<div class="grav-msg">"Sou cantor gospel de Goiânia e quero incluir esta faixa no
+meu próximo álbum. Aceito os termos que você definir para os direitos autorais."</div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarGrav('gsol-2','Paulo Henrique')">✓ Aceitar</button><button class="btn-rec2"
+onclick="recusarGrav('gsol-2')">✕ Recusar</button></div>
+</div>
+<div class="grav-item" id="gsol-3">
+<div class="grav-item-top"><img src="https://i.pravatar.cc/60?img=56"
+style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--oc);"
+alt=""><div style="flex:1;"><div class="grav-nome">Harmony Music Group</div><div
+class="grav-comp">📀 "Me Sustenta" — Composição</div></div><span
+class="grav-tipo">Gravadora</span></div>
+<div class="grav-msg">"Sua composição chamou nossa atenção pelo potencial de
+alcance. Propomos uma parceria de co-produção com divisão de royalties. Entre em contato
+para mais detalhes."</div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarGrav('gsol-3','Harmony Music')">✓ Aceitar</button><button class="btn-rec2"
+onclick="recusarGrav('gsol-3')">✕ Recusar</button></div>
+</div>
+<div class="grav-item" id="gsol-4">
+<div class="grav-item-top"><img src="https://i.pravatar.cc/60?img=60"
+style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--oc);"
+alt=""><div style="flex:1;"><div class="grav-nome">Renata Oliveira</div><div
+class="grav-comp">📀 "Entrego Tudo" — Composição</div></div><span class="grav-tipo"
+style="background:#E3F2FD;color:#1565C0;">Artista</span></div>
+<div class="grav-msg">"Cantor local querendo gravar cover autorizado para as
+redes sociais. Sem fins lucrativos, apenas para louvor à comunidade."</div>
+<div class="cont-actions"><button class="btn-acc"
+onclick="aceitarGrav('gsol-4','Renata')">✓ Aceitar</button><button class="btn-rec2"
+onclick="recusarGrav('gsol-4')">✕ Recusar</button></div>
+</div>
+<div class="grav-item" id="gsol-5">
+<div class="grav-item-top"><img src="https://i.pravatar.cc/60?img=70"
+style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--oc);"
+alt=""><div style="flex:1;"><div class="grav-nome">WR Music Brasil</div><div
+class="grav-comp">📀 "Fiel e Verdadeiro" — Composição</div></div><span
+class="grav-tipo">Gravadora</span></div>
+<div class="grav-msg">"Somos uma gravadora independente e gostaríamos de
+lançar sua composição no mercado internacional gospel. Podemos oferecer adiantamento
+de R$ 3.000."</div>
+<div class="cont-actions"><button class="btn-acc" onclick="aceitarGrav('gsol-5','WR
+Music')">✓ Aceitar</button><button class="btn-rec2" onclick="recusarGrav('gsol-5')">✕
+Recusar</button></div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<!-- ===== FAVORITOS ===== -->
+<div id="t-favoritos" class="page fade-in">
+<div class="page-header"><div><div class="page-title">Favoritos</div><div
+class="page-sub">Artistas salvos</div></div></div>
+<div id="fav-container" class="fav-grid"></div>
+</div>
+<!-- ===== SOLOAI ===== -->
+<div id="t-soloai" class="page fade-in" style="padding:28px;">
+<div class="soloai-chat-layout">
+<div class="soloai-chat-header">
+<div class="soloai-icon"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9
+9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19zm0-11a1 1 0 0 0-1 1v3a1 1 0 0 0
+.553.895l2.5 1.25a1 1 0 0 0 .894-1.79L13 12.382V9a1 1 0 0 0-1-1z"/></svg></div>
+<div>
+<div class="soloai-title">SoloAI — Assistente Musical</div>
+<div class="soloai-sub">IA especializada em carreira, marketing e estratégia
+musical</div>
+</div>
+</div>
+<div class="soloai-msgs" id="soloai-msgs">
+<div class="smsg ai">Olá! Sou o <strong>SoloAI</strong>, sua IA especializada no
+universo musical. 🎵<br><br>Posso te ajudar com:<br>• Estratégias de marketing para
+músicos<br>• Análise de mercado e tendências<br>• Dicas de carreira e networking<br>•
+Artistas ideais para eventos<br>• Gestão de direitos autorais<br><br>Como posso ajudar
+você hoje?</div>
+</div>
+<div class="soloai-suggestions" id="soloai-sugs">
+<span class="sug" onclick="enviarSugSoloAI(this,'Como aumentar minha audiência no
+gospel?')">📈 Crescer audiência gospel</span>
+<span class="sug" onclick="enviarSugSoloAI(this,'Que artistas indicar para casamento
+religioso?')">💒 Artista para casamento</span>
+<span class="sug" onclick="enviarSugSoloAI(this,'Como precificar meu cachê como
+artista iniciante?')">💰 Como precificar cachê</span>
+<span class="sug" onclick="enviarSugSoloAI(this,'Estratégias para lançar um álbum
+independente')">🎧 Lançar álbum indie</span>
+</div>
+<div class="soloai-input-area">
+<textarea class="soloai-input" id="soloai-inp" rows="1" placeholder="Pergunte sobre
+carreira, mercado musical, marketing..."></textarea>
+<button class="soloai-send" id="soloai-send-btn" onclick="enviarSoloAI()"><svg
+viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+</div>
+</div>
+</div>
+
+<!-- ===== BUSCAR PESSOAS ===== -->
+<div id="t-buscar" class="page fade-in">
+<div class="page-header"><div><div class="page-title">Buscar Pessoas</div><div
+class="page-sub">Encontre contratantes e outros artistas</div></div></div>
+<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);margin-bottom:20px;">
+<div style="display:flex;gap:10px;margin-bottom:14px;">
+<input class="busca-i" style="flex:1;" type="text" id="busca-pessoas-inp"
+placeholder="Nome, cidade, tipo..." oninput="buscarPessoas(this.value)">
+<button class="ba bc" style="padding:10px 18px;"
+onclick="buscarPessoas(document.getElementById('busca-pessoas-inp').value)">Buscar</b
+utton>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;" id="busca-tipo-row">
+<span class="chip on" onclick="filtroTipoBusca(this,'todos')">Todos</span>
+<span class="chip" onclick="filtroTipoBusca(this,'contratante')">Contratantes</span>
+<span class="chip" onclick="filtroTipoBusca(this,'artista')">Artistas</span>
+</div>
+</div>
+<div class="search-result-list" id="search-results-list"></div>
+</div>
+<!-- ===== CONFIG ===== -->
+<div id="t-config" class="page fade-in">
+<div class="page-header"><div><div class="page-title">Configurações</div></div></div>
+<div class="config-layout">
+<div class="config-nav">
+<div class="config-nav-item on" onclick="configAba('conta',this)">👤 Minha
+Conta</div>
+<div class="config-nav-item" onclick="configAba('tipo',this)">️ Tipo de Conta</div>
+<div class="config-nav-item" onclick="configAba('notif',this)">🔔 Notificações</div>
+<div class="config-nav-item" onclick="configAba('privacidade',this)">🔒
+Privacidade</div>
+<div class="config-nav-item" onclick="configAba('pagamento',this)">💳
+Pagamento</div>
+<div class="config-nav-item" onclick="configAba('assinatura',this)">⭐ Assinatura</div>
+<div class="config-nav-item" onclick="configAba('sobre',this)">i️ Sobre</div>
+</div>
+<div id="config-panel" class="config-panel"></div>
+</div>
+</div>
+</div><!-- end main -->
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+<!-- ===== MODALS ===== -->
+
+<!-- MODAL GRAVAR -->
+<div class="modal-overlay" id="modal-gravar">
+<div class="modal">
+<button class="modal-close" onclick="fecharModal('modal-gravar')">✕</button>
+<h2>🎙 Proposta de Gravação</h2>
+<p>Composição: <strong id="gravar-comp-nome"></strong></p>
+<div class="gravar-opts">
+<div class="gravar-opt on" onclick="selGravarTipo('artista',this)"><svg viewBox="0 0 24
+24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
+1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><div class="gravar-opt-t">Sou
+Artista</div><div class="gravar-opt-s">Quero gravar esta composição</div></div>
+<div class="gravar-opt" onclick="selGravarTipo('gravadora',this)"><svg viewBox="0 0 24
+24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9
+2-2V6c0-1.1-.9-2-2-2zm-8 2.5c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12
+13s-3.5-1.57-3.5-3.5S10.07 6 12 6z"/></svg><div class="gravar-opt-t">Sou
+Gravadora</div><div class="gravar-opt-s">Interesse nos direitos</div></div>
+</div>
+<div class="modal-form">
+<div class="modal-field"><label>Seu nome / empresa</label><input type="text"
+id="grav-nome-inp" placeholder="Nome completo ou empresa"></div>
+<div class="modal-field"><label>E-mail de contato</label><input type="email"
+id="grav-email-inp" placeholder="email@exemplo.com"></div>
+<div class="modal-field"><label>Mensagem para o artista</label><textarea
+id="grav-msg-inp" rows="3" placeholder="Descreva seu projeto e
+proposta..."></textarea></div>
+<button class="modal-btn" onclick="enviarPropGravacao()">📨 Enviar
+Proposta</button>
+</div>
+</div>
+</div>
+<!-- MODAL NOVA COMPOSIÇÃO -->
+<div class="modal-overlay" id="modal-new-comp">
+<div class="modal">
+<button class="modal-close" onclick="fecharModal('modal-new-comp')">✕</button>
+<h2>🎼 Registrar Composição</h2>
+<p>Adicione uma nova composição ao seu portfólio.</p>
+<div class="modal-form">
+<div class="modal-field"><label>Nome da Composição</label><input type="text"
+id="nc-nome" placeholder="Ex: Grande és Tu"></div>
+<div class="modal-field"><label>Descrição breve</label><textarea id="nc-desc"
+rows="2" placeholder="Estilo, tema, duração..."></textarea></div>
+<div class="modal-field">
+<label>Arquivo de Áudio</label>
+<div class="comp-upload-area" onclick="document.getElementById('nc-audio').click()">
+<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4
+1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+
+<p id="nc-audio-label">Clique para selecionar arquivo de áudio (MP3, WAV)</p>
+</div>
+<input type="file" id="nc-audio" accept="audio/*" style="display:none;"
+onchange="onAudioSel(this)">
+</div>
+<button class="modal-btn" onclick="registrarComp()">✅ Registrar
+Composição</button>
+</div>
+</div>
+</div>
+<!-- MODAL POST -->
+<div class="modal-overlay" id="modal-post">
+<div class="modal">
+<button class="modal-close" onclick="fecharModal('modal-post')">✕</button>
+<h2>📝 Nova Publicação</h2>
+<div class="post-type-row">
+<button class="post-type-btn on" onclick="selPostTipo('normal',this)">📸 Post
+Normal</button>
+<button class="post-type-btn" onclick="selPostTipo('participacao',this)">📍
+Participação</button>
+<button class="post-type-btn" onclick="selPostTipo('novidade',this)">🎵
+Novidade</button>
+</div>
+<div class="modal-form">
+<div id="post-loc-field" style="display:none;" class="modal-field"><label>📍 Localização
+do evento</label><input type="text" id="post-loc" placeholder="Ex: Arena BSB, Brasília -
+DF"></div>
+<div class="modal-field"><label>Legenda</label><textarea id="post-legenda" rows="3"
+placeholder="O que você quer compartilhar?"></textarea></div>
+<div class="modal-field">
+<div class="upload-area" onclick="document.getElementById('post-img-inp').click()">
+<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2
+2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+<p>Adicionar foto/vídeo (opcional)</p>
+</div>
+<input type="file" id="post-img-inp" accept="image/*" style="display:none;">
+</div>
+<button class="modal-btn" onclick="publicarPost()">🚀 Publicar</button>
+</div>
+</div>
+</div>
+<!-- MODAL ASSINATURA -->
+<div class="modal-overlay" id="modal-assinatura">
+<div class="modal">
+<button class="modal-close" onclick="fecharModal('modal-assinatura')">✕</button>
+<div class="sub-hero">
+
+<div style="font-size:2.5rem;margin-bottom:10px;">🎵</div>
+<h3>SoloDash Premium</h3>
+<p>Acesso completo à plataforma</p>
+</div>
+<div class="sub-price"><div class="price">R$ 4,99</div><div class="period">/mês ·
+Cancele quando quiser</div></div>
+<div class="sub-features">
+<div class="sub-feature"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42
+1.41L9 19 21 7l-1.41-1.41z"/></svg>Acesso ao SoloAI (IA musical)</div>
+<div class="sub-feature"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42
+1.41L9 19 21 7l-1.41-1.41z"/></svg>Gerencie contratos ilimitados</div>
+<div class="sub-feature"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42
+1.41L9 19 21 7l-1.41-1.41z"/></svg>Portfólio completo</div>
+<div class="sub-feature"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42
+1.41L9 19 21 7l-1.41-1.41z"/></svg>Chat direto com artistas</div>
+<div class="sub-feature"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42
+1.41L9 19 21 7l-1.41-1.41z"/></svg>Solicitações de gravação</div>
+</div>
+<button class="modal-btn" onclick="assinar()">⭐ Assinar R$ 4,99/mês</button>
+<button class="modal-btn modal-btn-sec" style="margin-top:8px;"
+onclick="fecharModal('modal-assinatura')">Agora não</button>
+</div>
+</div>
+<!-- MODAL EDITAR PERFIL -->
+<div class="modal-overlay" id="modal-edit-perfil">
+<div class="modal">
+<button class="modal-close" onclick="fecharModal('modal-edit-perfil')">✕</button>
+<h2>✏️ Editar Perfil</h2>
+<div class="modal-form">
+<div class="modal-field"><label>Nome</label><input type="text" id="ep-nome"
+value="Gabriel Santos"></div>
+<div class="modal-field"><label>Bio</label><textarea id="ep-bio" rows="3">Produtor e
+contratante de eventos em Brasília...</textarea></div>
+<div class="modal-field"><label>Cidade</label><input type="text" id="ep-cidade"
+value="Brasília, DF"></div>
+<button class="modal-btn" onclick="salvarPerfil()">💾 Salvar</button>
+</div>
+</div>
+</div>
+<script>
+// ===== ARTIST DATA (ARTISTAS REAIS) =====
+const JOEL_IMG =
+'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQ
+FBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIe
+JBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
+eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADZAagDASIAAhEBAxEB/8QAGwABA
+
+AMBAQEBAAAAAAAAAAAAAAECAwQFBgf/xABGEAABAwIEAwUFBgQFBAMBAAABAAID
+BAURBhIhMVETQVJhcYGRoRQiMkKxwdHwFSMzYnLhJDRDU4KSBxZjorLCJfH/xAAYAQE
+BAQEBAAAAAAAAAAAAAAAAAQIDBP/EAB8RAQEBAQADAQADAAAAAAAAAAABEQISA
+yExQVH/2gAMAwEAAhEDEQA/APkRERAREQEREAREQEREAREQEREAREQEREBERA
+RFIg';
+const artistas = [
+{id:1,nome:'Joelson &
+Ademilton',cidade:'Brasília-DF',estilo:'Gospel',nota:4.8,navals:127,bio:'A dupla Joelson &
+Ademilton é referência no ministério gospel há mais de 10 anos. Já se apresentaram em
+mais de 200 cidades pelo Brasil e no exterior. Com um repertório ungido e mensagens
+transformadoras, são presença certa nos maiores congressos, festividades e eventos
+corporativos cristãos do
+país.',foto:JOEL_IMG,fotoAvatar:JOEL_IMG,fotos:['https://picsum.photos/400/220?random=
+42','https://picsum.photos/400/220?random=43'],ups:82,tipo:'artista',ocupados:[2,5,12,13,19,
+20,26,27],repert:[{n:'Grande És',d:'4:12 · Louvor',audio:''},{n:'Rio de Deus',d:'5:34 ·
+Adoração',audio:''},{n:'Entrego Tudo',d:'3:58 · Ministério',audio:''},{n:'Fiel e Verdadeiro',d:'4:47
+· Louvor',audio:''},{n:'Me Sustenta',d:'6:02 · Adoração',audio:''}],
+participacoes:[{local:'Congresso Avivamento,
+Goiânia-GO',img:'https://picsum.photos/700/220?random=101',nome:'Congresso
+Avivamento 2024',desc:'Uma noite histórica! Ministração que tocou corações. Agradecemos
+a oportunidade de levar a mensagem a mais de 5 mil pessoas.'}],
+novidades:[{img:'https://picsum.photos/300/150?random=150',nome:'EP Novo
+Alvorecer',det:'5 faixas inéditas - disponível nas
+plataformas'},{img:'https://picsum.photos/300/150?random=151',nome:'Participação no CEM
+2024',det:'Em breve - Congresso Estadual de Ministério'}],
+redes:{wpp:'5561999990001',insta:'joelson.ademilton',face:'joelsonaademilton',yt:'JoelsonAd
+emilton'}},
+{id:2,nome:'Fernanda Brum',cidade:'Rio de
+Janeiro-RJ',estilo:'Gospel',nota:4.9,navals:2840,bio:'Fernanda Brum é uma das maiores
+cantoras gospel do Brasil. Com mais de 20 anos de carreira, dezenas de álbuns e prêmios,
+sua voz poderosa alcança milhões de corações pelo mundo. Especializada em eventos
+religiosos de grande porte, cultos e
+congressos.',foto:'https://i.pravatar.cc/300?img=33',fotoAvatar:'https://i.pravatar.cc/100?img=
+33',fotos:['https://picsum.photos/400/220?random=56','https://picsum.photos/400/220?rando
+m=57'],ups:214,tipo:'artista',ocupados:[1,7,8,14,15,21,22],repert:[{n:'Segura na Mão de
+Deus',d:'5:20 · Adoração'},{n:'Me Atraiu',d:'4:10 · Louvor'},{n:'É pra Você',d:'3:55 ·
+Louvor'}],participacoes:[{local:'Arena Carioca, Rio de
+Janeiro-RJ',img:'https://picsum.photos/700/220?random=102',nome:'Festival Gospel Rio
+2024',desc:'Mais um Festival incrível! Obrigada RJ pelo amor de sempre!
+🙏❤️'}],novidades:[{img:'https://picsum.photos/300/150?random=160',nome:'Novo Álbum
+"Fé"',det:'Lançamento 2024 · 12
+faixas'},{img:'https://picsum.photos/300/150?random=161',nome:'Turnê Nacional
+2025',det:'15 cidades · Datas em
+breve'}],redes:{wpp:'5521999990002',insta:'fernandabrum',face:'FernandaBrumOficial',yt:'Fer
+nandaBrumOficial'}},
+
+{id:3,nome:'Henrique &
+Juliano',cidade:'Uberlândia-MG',estilo:'Sertanejo',nota:4.9,navals:3421,bio:'Henrique &
+Juliano são a dupla sertaneja mais ouvida do Brasil. Suas músicas dominam as paradas e
+seus shows lotam os maiores palcos do país. Com um repertório que mistura sertanejo
+universitário, romântico e arrocha, garantem shows inesquecíveis para todos os tipos de
+eventos.',foto:'https://i.pravatar.cc/300?img=55',fotoAvatar:'https://i.pravatar.cc/100?img=55',f
+otos:['https://picsum.photos/400/220?random=64','https://picsum.photos/400/220?random=6
+5'],ups:445,tipo:'artista',ocupados:[3,4,10,11,17,18,24,25],repert:[{n:'Liberdade
+Provisória',d:'3:50 · Sertanejo'},{n:'Tô Indo Embora',d:'4:15 · Arrocha'},{n:'Podem
+Falar',d:'4:08 · Sertanejo'}],participacoes:[{local:'Expo Uberlândia,
+MG',img:'https://picsum.photos/700/220?random=103',nome:'Expo Sertanejo
+2024',desc:'Obrigado Uberlândia! Nossa cidade de sempre. Que
+noite!'}],novidades:[{img:'https://picsum.photos/300/150?random=170',nome:'Single Novo
+Verão 2024',det:'Já
+disponível'},{img:'https://picsum.photos/300/150?random=171',nome:'DVD ao Vivo em
+Uberlândia',det:'Em produção ·
+2025'}],redes:{wpp:'5534999990003',insta:'henriquejuliano',face:'HenriqueEJuliano',yt:'Henri
+queEJuliano'}},
+{id:4,nome:'Aline Barros',cidade:'São
+Paulo-SP',estilo:'Gospel',nota:4.8,navals:1987,bio:'Aline Barros é uma das artistas gospel
+mais premiadas do Brasil. Suas músicas cruzam fronteiras e são cantadas em cultos e
+igrejas ao redor do mundo. Com um ministério que une tradição e contemporaneidade, é a
+escolha perfeita para grandes conferências
+cristãs.',foto:'https://i.pravatar.cc/300?img=44',fotoAvatar:'https://i.pravatar.cc/100?img=44',fo
+tos:['https://picsum.photos/400/220?random=80','https://picsum.photos/400/220?random=81'
+],ups:187,tipo:'artista',ocupados:[5,6,12,13,19,20],repert:[{n:'Ressuscita-me',d:'5:44 ·
+Adoração'},{n:'Vem Espírito Santo',d:'4:20 · Louvor'},{n:'Quão Grande é o meu Deus',d:'5:12
+· Adoração'}],participacoes:[{local:'Expo Center Norte, São
+Paulo-SP',img:'https://picsum.photos/700/220?random=104',nome:'Congresso Nacional
+2024',desc:'São Paulo sempre de braços abertos! Que Deus abençoe cada vida alcançada
+esta noite! 🙌'}],novidades:[{img:'https://picsum.photos/300/150?random=180',nome:'Álbum
+Ao Vivo 2024',det:'Gravação especial
+disponível'},{img:'https://picsum.photos/300/150?random=181',nome:'Projeto Crianças de
+Deus',det:'Novo projeto
+infantil'}],redes:{wpp:'5511999990004',insta:'alinebarros',face:'AlineBarrosOficial',yt:'AlineBar
+ros'}},
+{id:5,nome:'Ana
+Castela',cidade:'Paraíso-SP',estilo:'Sertanejo',nota:4.7,navals:2103,bio:'Ana Castela,
+conhecida como Boiadeira, é um fenômeno do sertanejo moderno. Com hits que dominam o
+TikTok e as plataformas digitais, seu show energético conquista públicos de todas as
+idades. Ótima para festas universitárias, formaturas, rodeios e eventos
+corporativos.',foto:'https://i.pravatar.cc/300?img=25',fotoAvatar:'https://i.pravatar.cc/100?img
+=25',fotos:['https://picsum.photos/400/220?random=90','https://picsum.photos/400/220?rand
+om=91'],ups:312,tipo:'artista',ocupados:[1,2,8,9,15,16,22,23],repert:[{n:'Nosso
+Quadro',d:'3:24 · Sertanejo Pop'},{n:'Pipoco',d:'2:58 · Funk Sertanejo'},{n:'Solteiro
+Forçado',d:'3:10 · Sertanejo'}],participacoes:[{local:'Rodeio de Barretos,
+SP',img:'https://picsum.photos/700/220?random=105',nome:'Barretos
+2024',desc:'BARRETOS! Obrigada por tanto amor! Esse é o maior do mundo e eu amo
+
+demais! 🤠'}],novidades:[{img:'https://picsum.photos/300/150?random=190',nome:'EP
+"Boiadeira" Vol. 3',det:'Em breve ·
+2025'},{img:'https://picsum.photos/300/150?random=191',nome:'Collab com Gustavo
+Mioto',det:'Novo single - ouça
+agora'}],redes:{wpp:'5517999990005',insta:'anacastelacb',face:'AnaCapotelaOficial',yt:'AnaC
+astela'}},
+{id:6,nome:'Padre Fábio de
+Melo',cidade:'Cássia-MG',estilo:'MPB/Gospel',nota:5.0,navals:4200,bio:'Padre Fábio de
+Melo é sacerdote, escritor, cantor e apresentador. Um dos padres mais populares do Brasil,
+com música que une fé, poesia e sensibilidade. Seus shows são uma experiência espiritual
+única, perfeita para eventos religiosos e culturais de alto
+nível.',foto:'https://i.pravatar.cc/300?img=66',fotoAvatar:'https://i.pravatar.cc/100?img=66',foto
+s:['https://picsum.photos/400/220?random=95','https://picsum.photos/400/220?random=96'],
+ups:521,tipo:'artista',ocupados:[4,5,11,12,18,19,25,26],repert:[{n:'Deus no Comando',d:'4:30
+· MPB/Gospel'},{n:'Quem Pensa em Voar',d:'4:02 · Balada'},{n:'A Grande Noite',d:'5:15 ·
+Gospel'}],participacoes:[{local:'Canção Nova, Cachoeira
+Paulista-SP',img:'https://picsum.photos/700/220?random=106',nome:'Romaria de Aparecida
+2024',desc:'Que Aparecida nos guie sempre. Gratidão pela experiência única ao lado de
+tantos
+peregrinos.'}],novidades:[{img:'https://picsum.photos/300/150?random=195',nome:'Novo
+Livro "Tempo de Parar"',det:'Lançamento Natal
+2024'},{img:'https://picsum.photos/300/150?random=196',nome:'Show "Deus no
+Comando"',det:'Turnê 2025 - Teatro
+Nacional'}],redes:{wpp:'5535999990006',insta:'padrefabiodemelo',face:'PadreFabiodeMelo',y
+t:'PadreFabiodeMelo'}},
+{id:7,nome:'Péricles',cidade:'São
+Paulo-SP',estilo:'Pagode',nota:4.8,navals:1543,bio:'Péricles é um dos maiores nomes do
+samba e pagode do Brasil. Ex-vocalista do Exaltasamba, carreira solo brilhante com hits
+que animam festas e eventos há décadas. Voz privilegiada, show completo e energia
+contagiante.',foto:'https://i.pravatar.cc/300?img=77',fotoAvatar:'https://i.pravatar.cc/100?img=
+77',fotos:['https://picsum.photos/400/220?random=98','https://picsum.photos/400/220?rando
+m=99'],ups:203,tipo:'artista',ocupados:[6,7,13,14,20,21,27,28],repert:[{n:'Quero te
+Amar',d:'4:20 · Pagode'},{n:'Mina do Condomínio',d:'3:50 · Samba'},{n:'Dono do
+Mundo',d:'4:05 · Pagode'}],participacoes:[{local:'Sambódromo do Anhembi, São
+Paulo-SP',img:'https://picsum.photos/700/220?random=107',nome:'Festival Samba
+2024',desc:'São Paulo sempre em festa! Obrigado ao público incrível que lotou o Anhembi!
+🎶'}],novidades:[{img:'https://picsum.photos/300/150?random=197',nome:'DVD "Pericles ao
+Vivo"',det:'2024 - disponível no
+YouTube'},{img:'https://picsum.photos/300/150?random=198',nome:'Nova música com
+Thiaguinho',det:'Parceria especial -
+ouça'}],redes:{wpp:'5511999990007',insta:'periclesoficial',face:'PericlesOficial',yt:'PericlesOfi
+cial'}},
+{id:8,nome:'Chitãozinho & Xororó',cidade:'Ribeirão
+Preto-SP',estilo:'Sertanejo',nota:5.0,navals:5100,bio:'Chitãozinho & Xororó são lendas vivas
+do sertanejo raiz. Com mais de 50 anos de carreira e dezenas de discos de ouro e platina,
+sua apresentação é uma viagem pela história da música sertaneja. Presença indispensável
+em festas juninas, rodeios e eventos
+culturais.',foto:'https://i.pravatar.cc/300?img=88',fotoAvatar:'https://i.pravatar.cc/100?img=88',
+
+fotos:['https://picsum.photos/400/220?random=200','https://picsum.photos/400/220?random=
+201'],ups:389,tipo:'artista',ocupados:[1,8,9,15,16,22,23],repert:[{n:'Fio de Cabelo',d:'3:45 ·
+Sertanejo Raiz'},{n:'Somos Apaixonados',d:'4:10 · Sertanejo'},{n:'Eu Quero Só Você',d:'3:55 ·
+Sertanejo'}],participacoes:[{local:'Festa de Peão,
+Barretos-SP',img:'https://picsum.photos/700/220?random=108',nome:'Festa do Peão
+2024',desc:'50 anos de estrada e a emoção é sempre a mesma! Obrigado Brasil por tanto
+amor!'}],novidades:[{img:'https://picsum.photos/300/150?random=205',nome:'Álbum 50
+Anos',det:'Edição comemorativa
+especial'},{img:'https://picsum.photos/300/150?random=206',nome:'Especial
+Netflix',det:'Documentário em
+produção'}],redes:{wpp:'5516999990008',insta:'chitaozinhoxororo',face:'ChitaozinhoXororo',y
+t:'ChitaozinhoXororo'}},
+];
+const pessoas = [
+{id:101,nome:'Carlos
+Mendes',cidade:'Brasília-DF',tipo:'contratante',foto:'https://i.pravatar.cc/100?img=13',desc:'Pr
+odutor de eventos empresariais'},
+{id:102,nome:'Rafaela
+Costa',cidade:'Goiânia-GO',tipo:'contratante',foto:'https://i.pravatar.cc/100?img=21',desc:'Org
+anizadora de eventos sociais'},
+{id:103,nome:'Bruno Alves',cidade:'São
+Paulo-SP',tipo:'artista',foto:'https://i.pravatar.cc/100?img=30',desc:'Cantor sertanejo'},
+{id:104,nome:'Luciana Farias',cidade:'Belo
+Horizonte-MG',tipo:'contratante',foto:'https://i.pravatar.cc/100?img=47',desc:'Promotora de
+shows gospel'},
+{id:105,nome:'Roberto
+Neves',cidade:'Recife-PE',tipo:'artista',foto:'https://i.pravatar.cc/100?img=52',desc:'Músico
+MPB e forró'},
+];
+// ===== STATE =====
+let telaAtual = 'home';
+let artistaAtivo = artistas[0];
+let upCounts = {};
+artistas.forEach(a => upCounts[a.id] = a.ups);
+let favoritos = [];
+let tipoGravar = 'artista';
+let diasSelecionados = [];
+let assinante = false;
+let tipoConta = 'contratante'; // 'contratante','artista','ambos'
+let minhasComposicoes = [];
+let contFechados = 12, contPend = 3, contGrav = 5;
+let searchTipoBusca = 'todos';
+// ===== CORE =====
+function ir(tela) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
+
+document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
+const el = document.getElementById('t-' + tela);
+if (el) { el.classList.add('ativa'); el.classList.add('fade-in');
+setTimeout(()=>el.classList.remove('fade-in'),400); }
+const nb = document.getElementById('nb-' + tela);
+if (nb) nb.classList.add('on');
+telaAtual = tela;
+if (tela === 'favoritos') buildFavoritos();
+if (tela === 'config') { renderConfigPanel(configAbaAtual); atualizarFAB(); }
+if (tela === 'buscar') buscarPessoas('');
+window.scrollTo(0,0);
+}
+function abrirMeuPerfil() {
+if (!assinante) { abrirAssinatura(); return; }
+atualizarMeuPerfil();
+ir('meu-perfil');
+document.getElementById('nb-meu-perfil').classList.add('on');
+}
+function abrirAssinatura() { abrirModal('modal-assinatura'); }
+function assinar() {
+assinante = true;
+fecharModal('modal-assinatura');
+document.getElementById('sub-badge').innerHTML = '<div class="sub-badge-t">✅
+Premium Ativo</div><div class="sub-badge-s">R$ 4,99/mês · Acesso total</div>';
+document.getElementById('sub-badge').style.background =
+'linear-gradient(135deg,#1a4d2e,#2e7d4a)';
+toast('🎉 Bem-vindo ao SoloDash Premium!');
+atualizarFAB();
+}
+function atualizarFAB() {
+const show = (tipoConta === 'artista' || tipoConta === 'ambos') && assinante;
+document.getElementById('fab-post').className = 'fab-post' + (show ? ' show' : '');
+}
+function toast(msg) {
+const t = document.getElementById('toast');
+t.textContent = msg; t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 2800);
+}
+function abrirModal(id) { document.getElementById(id).classList.add('show'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('show'); }
+// close modal on overlay click
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+o.addEventListener('click', e => { if(e.target === o) o.classList.remove('show'); });
+});
+// ===== POSTS =====
+function buildPosts(lista) {
+const c = document.getElementById('posts-container');
+c.innerHTML = '';
+lista.forEach(a => {
+c.innerHTML += `<div class="card-art">
+<div class="ph">
+<img src="${a.fotoAvatar}" class="pav" alt="${a.nome}" onclick="abrirPerfil(${a.id})">
+<div class="pi"><span class="pn" onclick="abrirPerfil(${a.id})">${a.nome}</span><span
+class="pl">${a.cidade} · ${a.estilo} · ★ ${a.nota}</span></div>
+<span class="badge">Em Alta</span>
+</div>
+<p class="pt">${a.bio.slice(0,130)}...</p>
+<div class="pf"><img src="${a.fotos[0]}" alt="Show"><img src="${a.fotos[1]}"
+alt="Show"></div>
+<div class="pa">
+<button class="ba bu" id="up-${a.id}" onclick="darUp(${a.id},this)"><svg viewBox="0 0
+24 24"><path d="M1
+21h4V9H1v12Zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1
+7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5
+1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2Z"/></svg> Up (${upCounts[a.id]})</button>
+<button class="ba bc" onclick="abrirPerfil(${a.id})"><svg viewBox="0 0 24 24"><path
+d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8
+4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> Ver Perfil</button>
+<button class="ba btn-fav" onclick="adicionarFavorito(${a.id})"><svg viewBox="0 0 24
+24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0
+3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55
+11.54L12 21.35z"/></svg> Fav</button>
+</div>
+</div>`;
+});
+}
+function darUp(id, btn) {
+upCounts[id]++;
+btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M1
+21h4V9H1v12Zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1
+7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5
+1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2Z"/></svg> Up (${upCounts[id]})`;
+btn.style.background = '#2E7D4A'; btn.style.color = '#fff';
+toast('👍 Up registrado!');
+}
+function filtroChip(el, cat) {
+
+document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+el.classList.add('on');
+const f = cat === 'Todos' ? artistas : artistas.filter(a => a.estilo.includes(cat));
+buildPosts(f.length ? f : artistas);
+}
+function filtrarArtistas(q) {
+const f = q.trim().length < 2 ? artistas : artistas.filter(a =>
+a.nome.toLowerCase().includes(q.toLowerCase()) ||
+a.estilo.toLowerCase().includes(q.toLowerCase()) ||
+a.cidade.toLowerCase().includes(q.toLowerCase()));
+buildPosts(f.length ? f : artistas);
+}
+// ===== PERFIL =====
+function abrirPerfil(id) {
+artistaAtivo = artistas.find(a => a.id === id) || artistas[0];
+preencherPerfil(artistaAtivo);
+ir('perfil');
+document.querySelectorAll('.aba').forEach(a => a.classList.remove('on'));
+document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+document.getElementById('aba-faixas').classList.add('on');
+document.querySelectorAll('#t-perfil .tab')[0].classList.add('on');
+diasSelecionados = [];
+buildCal(artistaAtivo);
+}
+function preencherPerfil(a) {
+document.getElementById('p-foto').src = a.foto;
+document.getElementById('p-nome').textContent = a.nome;
+document.getElementById('p-cidade').textContent = a.cidade;
+document.getElementById('p-estilo').textContent = a.estilo;
+document.getElementById('p-nota').textContent = a.nota;
+document.getElementById('p-nota-tag').textContent = a.nota + ' (' + a.navals + '
+avaliações)';
+document.getElementById('p-navals').textContent = a.navals + ' avaliações verificadas';
+document.getElementById('p-bio-full').innerHTML = a.bio;
+buildFaixas(a);
+buildParticipacoes(a);
+buildNovidades(a);
+buildCompExt(a);
+buildSocial(a);
+}
+function aba(id, btn) {
+document.querySelectorAll('#t-perfil .aba').forEach(a => a.classList.remove('on'));
+document.querySelectorAll('#t-perfil .tab').forEach(b => b.classList.remove('on'));
+document.getElementById('aba-' + id).classList.add('on');
+
+btn.classList.add('on');
+if (id === 'agenda') buildCal(artistaAtivo);
+}
+function abaMe(id, btn) {
+document.querySelectorAll('#t-meu-perfil .aba').forEach(a => a.classList.remove('on'));
+document.querySelectorAll('#meu-tabs .tab').forEach(b => b.classList.remove('on'));
+document.getElementById(id).classList.add('on');
+btn.classList.add('on');
+}
+function buildFaixas(a) {
+const c = document.getElementById('faixas-list');
+c.innerHTML = '';
+a.repert.forEach((m, i) => {
+c.innerHTML += `<div class="mi"><div class="mn">${i+1}</div><div class="mi-info"><div
+class="mi-nome">${m.n}</div><div class="mi-dur">${m.d}</div></div><button class="bmp"
+onclick="togglePlay(this)"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8
+5Z"/></svg></button><button class="btn-gravar-comp"
+onclick="abrirGravar('${m.n.replace(/'/g,"\\'")}')">🎙 Gravar</button></div>`;
+});
+}
+function buildCompExt(a) {
+const c = document.getElementById('comp-list-ext');
+c.innerHTML = '';
+a.repert.forEach((m, i) => {
+c.innerHTML += `<div class="mi"><div class="mn">${i+1}</div><div class="mi-info"><div
+class="mi-nome">${m.n}</div><div class="mi-dur">${m.d}</div></div><button
+class="btn-gravar-comp" onclick="abrirGravar('${m.n.replace(/'/g,"\\'")}')">🎙 Propor
+Gravação</button></div>`;
+});
+}
+function buildParticipacoes(a) {
+const c = document.getElementById('participacoes-list');
+c.innerHTML = '';
+(a.participacoes || []).forEach(p => {
+c.innerHTML += `<div class="part-card"><div class="part-loc"><svg viewBox="0 0 24
+24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75
+7-13c0-3.87-3.13-7-7-7z"/></svg>${p.local}</div><img src="${p.img}" class="part-img"
+alt=""><div class="part-body"><div class="part-nome">${p.nome}</div><div
+class="part-desc">${p.desc}</div></div></div>`;
+});
+}
+function buildNovidades(a) {
+const c = document.getElementById('novidades-list');
+
+c.innerHTML = '';
+(a.novidades || []).forEach(n => {
+c.innerHTML += `<div class="nov-card"><img src="${n.img}" class="nov-img" alt=""><div
+class="nov-body"><div class="nov-tit">${n.nome}</div><div
+class="nov-det">${n.det}</div></div></div>`;
+});
+}
+function buildSocial(a) {
+const c = document.getElementById('social-links');
+const r = a.redes || {};
+c.innerHTML = '';
+if (r.wpp) c.innerHTML += `<button class="social-btn soc-wpp"
+onclick="window.open('https://wa.me/${r.wpp}','_blank')"><svg viewBox="0 0 24 24"
+style="width:16px;height:16px;fill:#2E7D4A;"><path d="M17.472
+14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94
+1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.6
+53-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.49
+7.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.17
+3-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462
+1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489
+1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719
+2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+WhatsApp</button>`;
+if (r.insta) c.innerHTML += `<button class="social-btn soc-ig"
+onclick="window.open('https://instagram.com/${r.insta}','_blank')">📸 Instagram</button>`;
+if (r.face) c.innerHTML += `<button class="social-btn soc-fb"
+onclick="window.open('https://facebook.com/${r.face}','_blank')">📘 Facebook</button>`;
+if (r.yt) c.innerHTML += `<button class="social-btn soc-yt"
+onclick="window.open('https://youtube.com/@${r.yt}','_blank')">▶ YouTube</button>`;
+}
+function togglePlay(btn) {
+document.querySelectorAll('.bmp path').forEach(p => p.setAttribute('d','M8 5v14l11-7L8
+5Z'));
+const p = btn.querySelector('path');
+const play = 'M8 5v14l11-7L8 5Z', pause = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
+p.setAttribute('d', p.getAttribute('d') === play ? pause : play);
+toast(p.getAttribute('d') === pause ? '▶ Reproduzindo...' : '⏸ Pausado');
+}
+function solicitarChat() {
+toast('📨 Solicitação de chat enviada para ' + artistaAtivo.nome + '! Aguarde a
+aprovação.');
+}
+function toggleFavorito() { adicionarFavorito(artistaAtivo.id); }
+
+function adicionarFavorito(id) {
+const a = artistas.find(x => x.id === id);
+if (!a) return;
+if (!favoritos.find(x => x.id === id)) { favoritos.push(a); toast('❤️ ' + a.nome + ' adicionado
+aos favoritos!'); }
+else { toast('i️ ' + a.nome + ' já está nos favoritos.'); }
+}
+function removerFavorito(id) {
+favoritos = favoritos.filter(x => x.id !== id);
+buildFavoritos();
+toast('💔 Removido dos favoritos.');
+}
+function buildFavoritos() {
+const c = document.getElementById('fav-container');
+if (!favoritos.length) {
+c.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#aaa;"><div
+style="font-size:3rem;margin-bottom:12px;">💔</div><p>Nenhum favorito ainda. Explore
+artistas e clique em Favoritar!</p></div>';
+return;
+}
+c.innerHTML = '';
+favoritos.forEach(a => {
+c.innerHTML += `<div class="fav-card" onclick="abrirPerfil(${a.id})"><div
+class="fav-img-wrap"><img src="${a.foto}" alt="${a.nome}"><button class="fav-remove"
+onclick="event.stopPropagation();removerFavorito(${a.id})"><svg viewBox="0 0 24
+24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41
+17.59 19 19 17.59 13.41 12z"/></svg></button></div><div class="fav-body"><div
+class="fav-nome">${a.nome}</div><div class="fav-info">${a.cidade} · ${a.estilo} · ★
+${a.nota}</div></div></div>`;
+});
+}
+// ===== AGENDA MULTI-DAY =====
+function buildCal(a) {
+a = a || artistaAtivo;
+diasSelecionados = [];
+const g = document.getElementById('cal-grid');
+if (!g) return;
+g.innerHTML = '';
+for (let i = 0; i < 4; i++) { const v = document.createElement('div'); v.className = 'dc vazio';
+g.appendChild(v); }
+for (let d = 1; d <= 30; d++) {
+const el = document.createElement('div');
+el.className = 'dc' + (a.ocupados.includes(d) ? ' ind' : '');
+el.textContent = d;
+if (!a.ocupados.includes(d)) el.onclick = () => toggleDia(el, d);
+
+g.appendChild(el);
+}
+atualizarDiasSel();
+}
+function toggleDia(el, d) {
+if (diasSelecionados.includes(d)) { diasSelecionados = diasSelecionados.filter(x => x !==
+d); el.classList.remove('sel'); }
+else { diasSelecionados.push(d); el.classList.add('sel'); }
+atualizarDiasSel();
+}
+function atualizarDiasSel() {
+const txt = document.getElementById('dias-sel-txt');
+const res = document.getElementById('dias-sel-resumo');
+if (!txt) return;
+if (!diasSelecionados.length) { txt.textContent = 'Clique para selecionar múltiplos dias';
+if(res) res.textContent = ''; return; }
+const sorted = [...diasSelecionados].sort((a,b)=>a-b);
+txt.textContent = sorted.length + ' dia(s) selecionado(s): ' + sorted.join(', ') + ' de Novembro';
+if (res) res.textContent = '📅 Dias: ' + sorted.join(', ') + ' de Novembro';
+}
+function enviarSolicitacaoAgenda() {
+if (!diasSelecionados.length) { toast('⚠️ Selecione ao menos um dia.'); return; }
+const msg = document.getElementById('agenda-msg').value;
+toast('📨 Solicitação enviada para ' + artistaAtivo.nome + ' para os dias ' +
+[...diasSelecionados].sort((a,b)=>a-b).join(', ') + '!');
+diasSelecionados = [];
+document.querySelectorAll('.dc.sel').forEach(d => d.classList.remove('sel'));
+atualizarDiasSel();
+if (msg) document.getElementById('agenda-msg').value = '';
+}
+// ===== GRAVAR =====
+function abrirGravar(comp) {
+document.getElementById('gravar-comp-nome').textContent = comp;
+abrirModal('modal-gravar');
+}
+function selGravarTipo(tipo, el) {
+tipoGravar = tipo;
+document.querySelectorAll('.gravar-opt').forEach(o => o.classList.remove('on'));
+el.classList.add('on');
+}
+function enviarPropGravacao() {
+const nome = document.getElementById('grav-nome-inp').value.trim();
+
+const email = document.getElementById('grav-email-inp').value.trim();
+if (!nome || !email) { toast('⚠️ Preencha nome e e-mail.'); return; }
+fecharModal('modal-gravar');
+toast('✅ Proposta enviada para ' + artistaAtivo.nome + '!');
+document.getElementById('grav-nome-inp').value = '';
+document.getElementById('grav-email-inp').value = '';
+document.getElementById('grav-msg-inp').value = '';
+}
+// ===== CONTRATOS =====
+function aceitarContrato(id, nome) {
+const el = document.getElementById(id);
+if (!el) return;
+el.innerHTML = `<div class="cont-item-top" style="opacity:.5;"><div
+class="cont-item-nome">${nome}</div><div style="margin-left:auto;"><span
+class="cont-status ok">✓ Aceito</span></div></div>`;
+contFechados++;
+contPend--;
+document.getElementById('cont-fechados').textContent = contFechados;
+document.getElementById('cont-pendentes').textContent = contPend;
+document.getElementById('cont-badge').textContent = contPend + contGrav;
+toast('✅ Contrato com ' + nome + ' aceito!');
+}
+function recusarContrato(id) {
+const el = document.getElementById(id);
+if (!el) return;
+el.style.opacity = '.35'; el.style.pointerEvents = 'none';
+contPend--;
+document.getElementById('cont-pendentes').textContent = contPend;
+document.getElementById('cont-badge').textContent = contPend + contGrav;
+toast('✕ Contrato recusado.');
+}
+function aceitarGrav(id, nome) {
+const el = document.getElementById(id);
+if (!el) return;
+el.style.opacity = '.4'; el.style.pointerEvents = 'none';
+contGrav--;
+document.getElementById('cont-grav').textContent = contGrav;
+document.getElementById('cont-badge').textContent = contPend + contGrav;
+toast('✅ Solicitação de ' + nome + ' aceita! Contato será iniciado.');
+}
+function recusarGrav(id) {
+const el = document.getElementById(id);
+if (!el) return;
+el.style.opacity = '.35'; el.style.pointerEvents = 'none';
+
+contGrav--;
+document.getElementById('cont-grav').textContent = contGrav;
+document.getElementById('cont-badge').textContent = contPend + contGrav;
+toast('✕ Solicitação recusada.');
+}
+// ===== CHAT =====
+const termosFuga =
+/(\d{2}\s?\d{4,5}[\s-]?\d{4}|\@[\w.]+|instagram|whatsapp|telegram|email|gmail|\.com)/i;
+function hora() { const d = new Date(); return d.getHours() + ':' +
+String(d.getMinutes()).padStart(2,'0'); }
+function enviarMsg() {
+const inp = document.getElementById('chat-inp'), txt = inp.value.trim();
+if (!txt) return;
+const msgs = document.getElementById('chat-msgs');
+msgs.innerHTML += `<div class="msg minha">${txt}<span
+class="msg-time">${hora()}</span></div>`;
+inp.value = ''; msgs.scrollTop = msgs.scrollHeight;
+if (termosFuga.test(txt)) {
+document.getElementById('alerta-fuga').style.display = 'block';
+setTimeout(() => { msgs.innerHTML += `<div class="msg deles"
+style="color:var(--vm);">⚠️ Troque contatos após confirmar a reserva aqui.<span
+class="msg-time">${hora()}</span></div>`; msgs.scrollTop = msgs.scrollHeight; }, 800);
+return;
+}
+const resps = ['Claro! Posso detalhar melhor.','Tenho agenda disponível para esse
+período.','Posso enviar proposta oficial.','O cachê inclui equipamento de som. Confirma?'];
+setTimeout(() => { msgs.innerHTML += `<div class="msg
+deles">${resps[Math.floor(Math.random()*resps.length)]}<span
+class="msg-time">${hora()}</span></div>`; msgs.scrollTop = msgs.scrollHeight; }, 1100);
+}
+function enviarProposta() {
+const msgs = document.getElementById('chat-msgs');
+msgs.innerHTML += `<div class="msg-proposta"><div
+style="font-size:.76rem;color:#888;margin-bottom:4px;">📋 Proposta Oficial</div><div
+class="prop-val">R$ 1.400</div><div class="prop-det">Show completo · 2h · Som
+incluso</div><button class="btn-pagar" onclick="toast('✅ Pagamento confirmado!')">💳
+Pagar e Confirmar</button></div>`;
+msgs.scrollTop = msgs.scrollHeight;
+document.getElementById('btn-prop').style.display = 'none';
+toast('Proposta enviada!');
+}
+document.getElementById('chat-inp').addEventListener('keydown', e => {
+if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMsg();} });
+
+// ===== SOLOAI (Anthropic API) =====
+async function enviarSoloAI() {
+const inp = document.getElementById('soloai-inp'), txt = inp.value.trim();
+if (!txt) return;
+adicionarMsgSoloAI(txt, 'user');
+inp.value = '';
+document.getElementById('soloai-send-btn').disabled = true;
+const loadId = 'load-' + Date.now();
+document.getElementById('soloai-msgs').innerHTML += `<div class="smsg ai
+smsg-loading" id="${loadId}"><span></span><span></span><span></span></div>`;
+scrollSoloAI();
+try {
+const resp = await fetch('https://api.anthropic.com/v1/messages', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+model: 'claude-sonnet-4-20250514',
+max_tokens: 1000,
+system: 'Você é o SoloAI, assistente especializado no universo musical brasileiro. Seu
+foco é carreira artística, marketing musical, gestão de shows, direitos autorais, estratégias
+de divulgação, mercado de eventos, precificação de cachê e tendências do setor. Responda
+sempre em português brasileiro, de forma prática, direta e especializada. Máximo 300
+palavras. Use formatação clara com tópicos quando necessário.',
+messages: soloAIHistory.concat([{role:'user',content:txt}])
+})
+});
+const data = await resp.json();
+const el = document.getElementById(loadId);
+if (el) el.remove();
+const aiText = data.content?.[0]?.text || 'Desculpe, não consegui responder. Tente
+novamente.';
+soloAIHistory.push({role:'user',content:txt}, {role:'assistant',content:aiText});
+adicionarMsgSoloAI(aiText, 'ai');
+} catch(err) {
+const el = document.getElementById(loadId);
+if (el) el.remove();
+adicionarMsgSoloAI('Erro de conexão. Verifique sua internet e tente novamente.', 'ai');
+}
+document.getElementById('soloai-send-btn').disabled = false;
+}
+let soloAIHistory = [];
+function adicionarMsgSoloAI(txt, tipo) {
+const msgs = document.getElementById('soloai-msgs');
+const div = document.createElement('div');
+div.className = 'smsg ' + tipo;
+div.innerHTML = txt.replace(/\n/g,'<br>');
+
+msgs.appendChild(div);
+scrollSoloAI();
+}
+function scrollSoloAI() { const m = document.getElementById('soloai-msgs'); m.scrollTop =
+m.scrollHeight; }
+function enviarSugSoloAI(el, txt) {
+document.getElementById('soloai-inp').value = txt;
+enviarSoloAI();
+document.getElementById('soloai-sugs').style.display = 'none';
+}
+document.getElementById('soloai-inp').addEventListener('keydown', e => {
+if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarSoloAI();} });
+// ===== MEU PERFIL =====
+function atualizarMeuPerfil() {
+document.getElementById('meu-sub-txt').textContent = (tipoConta === 'contratante' ?
+'Contratante' : tipoConta === 'artista' ? 'Artista' : 'Artista & Contratante') + ' · Brasília, DF';
+// Show/hide tabs based on tipo
+const showArtista = tipoConta === 'artista' || tipoConta === 'ambos';
+document.getElementById('tab-faixas-me').style.display = showArtista ? '' : 'none';
+document.getElementById('tab-comp-me').style.display = showArtista ? '' : 'none';
+document.getElementById('tab-agenda-me').style.display = showArtista ? '' : 'none';
+if (showArtista) {
+document.getElementById('me-faixas').innerHTML = '<div
+style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px
+var(--so);"><p style="text-align:center;color:#aaa;font-size:.86rem;padding:20px;">Nenhuma
+faixa cadastrada. Registre suas composições!</p></div>';
+document.getElementById('me-comp-lista').innerHTML = minhasComposicoes.length ?
+minhasComposicoes.map(c => `<div class="comp-item"><svg viewBox="0 0 24 24"
+style="width:28px;height:28px;fill:var(--ou);flex-shrink:0;"><path d="M12
+3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79
+4-4V7h4V3h-6z"/></svg><div class="comp-item-info"><div
+class="comp-item-nome">${c.nome}</div><div class="comp-item-desc"
+style="font-size:.76rem;color:#888;">${c.desc}</div></div><div
+class="comp-actions"><button class="btn-pub" onclick="toast('✅ ${c.nome}
+publicada!')">Publicar</button><button class="btn-del"
+onclick="removerComp('${c.id}')"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2
+2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1
+1H5v2h14V4z"/></svg></button></div></div>`).join('') : '<p
+style="text-align:center;padding:20px;color:#aaa;font-size:.86rem;">Nenhuma composição
+registrada ainda.</p>';
+}
+atualizarFAB();
+}
+
+function salvarPerfil() {
+document.querySelector('.meu-nome').textContent =
+document.getElementById('ep-nome').value;
+document.getElementById('me-bio-txt').textContent =
+document.getElementById('ep-bio').value;
+fecharModal('modal-edit-perfil');
+toast('✅ Perfil atualizado!');
+}
+// ===== COMPOSIÇÕES =====
+function onAudioSel(inp) {
+const name = inp.files[0]?.name || 'Arquivo selecionado';
+document.getElementById('nc-audio-label').textContent = '🎵 ' + name;
+}
+function registrarComp() {
+const nome = document.getElementById('nc-nome').value.trim();
+const desc = document.getElementById('nc-desc').value.trim();
+if (!nome) { toast('⚠️ Digite o nome da composição.'); return; }
+minhasComposicoes.push({ id: Date.now().toString(), nome, desc: desc || 'Sem descrição'
+});
+fecharModal('modal-new-comp');
+toast('✅ Composição "' + nome + '" registrada!');
+document.getElementById('nc-nome').value = ''; document.getElementById('nc-desc').value
+= '';
+if (telaAtual === 'meu-perfil') atualizarMeuPerfil();
+}
+function removerComp(id) {
+minhasComposicoes = minhasComposicoes.filter(c => c.id !== id);
+toast('🗑 Composição removida.'); atualizarMeuPerfil();
+}
+// ===== POST =====
+let postTipo = 'normal';
+function selPostTipo(tipo, btn) {
+postTipo = tipo;
+document.querySelectorAll('.post-type-btn').forEach(b => b.classList.remove('on'));
+btn.classList.add('on');
+document.getElementById('post-loc-field').style.display = tipo === 'participacao' ? '' : 'none';
+}
+function publicarPost() {
+const legenda = document.getElementById('post-legenda').value.trim();
+if (!legenda) { toast('⚠️ Adicione uma legenda.'); return; }
+fecharModal('modal-post');
+toast('✅ Publicação criada com sucesso!');
+document.getElementById('post-legenda').value = '';
+
+}
+// ===== BUSCAR PESSOAS =====
+function filtroTipoBusca(el, tipo) {
+searchTipoBusca = tipo;
+document.querySelectorAll('#busca-tipo-row .chip').forEach(c => c.classList.remove('on'));
+el.classList.add('on');
+buscarPessoas(document.getElementById('busca-pessoas-inp').value);
+}
+function buscarPessoas(q) {
+let lista = pessoas;
+if (searchTipoBusca !== 'todos') lista = lista.filter(p => p.tipo === searchTipoBusca);
+if (q.trim().length >= 2) lista = lista.filter(p =>
+p.nome.toLowerCase().includes(q.toLowerCase()) ||
+p.cidade.toLowerCase().includes(q.toLowerCase()));
+const c = document.getElementById('search-results-list');
+if (!lista.length) { c.innerHTML = '<p
+style="color:#aaa;font-size:.86rem;text-align:center;padding:20px;">Nenhum resultado
+encontrado.</p>'; return; }
+c.innerHTML = lista.map(p => `<div class="search-res-item">
+<img src="${p.foto}" alt="${p.nome}">
+<div class="search-res-info"><div class="search-res-nome">${p.nome}</div><div
+class="search-res-det" style="font-size:.76rem;color:#888;">${p.cidade} · ${p.tipo ===
+'contratante' ? '🏢 Contratante' : '🎤 Artista'} · ${p.desc}</div></div>
+<button class="ba btn-chat-req" onclick="enviarSolChat('${p.nome}')"><svg viewBox="0 0
+24 24" style="width:13px;height:13px;"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0
+2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg> Solicitar Chat</button>
+</div>`).join('');
+}
+function enviarSolChat(nome) {
+toast('📨 Solicitação de chat enviada para ' + nome + '! Aguarde aprovação.');
+}
+// ===== CONFIGURAÇÕES =====
+let configAbaAtual = 'conta';
+const configPanels = {
+conta: () => `<h3>Minha Conta</h3>
+<div class="config-row"><div><div class="config-label">Nome
+completo</div></div><input class="config-input" value="Gabriel Santos"></div>
+<div class="config-row"><div><div class="config-label">E-mail</div></div><input
+class="config-input" type="email" value="gabriel@email.com"></div>
+<div class="config-row"><div><div class="config-label">Cidade</div></div><input
+class="config-input" value="Brasília, DF"></div>
+<div class="config-row"><div><div class="config-label">Telefone</div></div><input
+class="config-input" value="(61) 99999-0000"></div>
+
+<button class="btn-config-save" onclick="toast('✅ Dados salvos!')">Salvar</button>
+<div class="danger-zone"><h4>⚠️ Zona de Perigo</h4><button class="btn-danger"
+onclick="toast('Senha alterada!')">Alterar Senha</button><button class="btn-danger"
+onclick="toast('Conta excluída.')">Excluir Conta</button></div>`,
+tipo: () => `<h3>Tipo de Conta</h3>
+<p style="font-size:.84rem;color:#888;margin-bottom:16px;">Escolha como você usa a
+plataforma. Isso define quais funcionalidades ficam disponíveis no seu perfil.</p>
+<div class="tipo-conta-grid">
+<div class="tipo-opt ${tipoConta==='contratante'?'on':''}"
+onclick="mudarTipoConta('contratante',this)"><div class="tipo-opt-icon">🏢</div><div
+class="tipo-opt-t">Contratante</div><div class="tipo-opt-s">Contrata artistas para
+eventos</div></div>
+<div class="tipo-opt ${tipoConta==='artista'?'on':''}"
+onclick="mudarTipoConta('artista',this)"><div class="tipo-opt-icon">🎤</div><div
+class="tipo-opt-t">Artista</div><div class="tipo-opt-s">Oferta shows e
+apresentações</div></div>
+<div class="tipo-opt ${tipoConta==='ambos'?'on':''}"
+onclick="mudarTipoConta('ambos',this)"><div class="tipo-opt-icon">🎯</div><div
+class="tipo-opt-t">Ambos</div><div class="tipo-opt-s">Artista que também
+contrata</div></div>
+</div>
+<div
+style="margin-top:16px;padding:13px;background:var(--cl);border-radius:10px;font-size:.82re
+m;color:var(--mm);">
+Conta atual: <strong>${tipoConta === 'contratante' ? '🏢 Contratante' : tipoConta ===
+'artista' ? '🎤 Artista' : '🎯 Ambos'}</strong><br>
+${tipoConta === 'contratante' ? 'Faixas, Composições e Agenda de disponibilidade estão
+desativados no seu perfil.' : 'Todas as funcionalidades estão ativas.'}
+</div>`,
+notif: () => `<h3>Notificações</h3>
+<div class="config-row"><div><div class="config-label">Novas mensagens</div><div
+class="config-desc">Alertas de chat</div></div><div class="toggle on"
+onclick="this.classList.toggle('on')"></div></div>
+<div class="config-row"><div><div class="config-label">Contratos</div><div
+class="config-desc">Novos contratos e propostas</div></div><div class="toggle on"
+onclick="this.classList.toggle('on')"></div></div>
+<div class="config-row"><div><div class="config-label">Solicitações de
+gravação</div><div class="config-desc">Artistas/gravadoras interessados</div></div><div
+class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="config-row"><div><div class="config-label">Promoções</div><div
+class="config-desc">Novidades e ofertas</div></div><div class="toggle"
+onclick="this.classList.toggle('on')"></div></div>
+<button class="btn-config-save" onclick="toast('✅ Notificações
+salvas!')">Salvar</button>`,
+privacidade: () => `<h3>Privacidade</h3>
+<div class="config-row"><div><div class="config-label">Perfil visível</div><div
+class="config-desc">Outros usuários podem ver seu perfil</div></div><div class="toggle on"
+onclick="this.classList.toggle('on')"></div></div>
+
+<div class="config-row"><div><div class="config-label">Aparecer em buscas</div><div
+class="config-desc">Ser encontrado em buscas de pessoas</div></div><div class="toggle
+on" onclick="this.classList.toggle('on')"></div></div>
+<div class="config-row"><div><div class="config-label">2FA (Autenticação)</div><div
+class="config-desc">Segurança extra na conta</div></div><div class="toggle"
+onclick="this.classList.toggle('on')"></div></div>
+<button class="btn-config-save" onclick="toast('✅ Privacidade salva!')">Salvar</button>`,
+pagamento: () => `<h3>Pagamento</h3>
+<div class="config-row"><div><div class="config-label">Método
+padrão</div></div><select class="config-select"><option>PIX</option><option>Cartão de
+crédito</option><option>Boleto</option></select></div>
+<div class="config-row"><div><div class="config-label">Cartão salvo</div><div
+class="config-desc">Visa •••• 4242 · 12/26</div></div><button class="btn-danger"
+onclick="toast('Cartão removido.')">Remover</button></div>
+<button class="btn-config-save" onclick="toast('✅ Dados de pagamento
+salvos!')">Salvar</button>`,
+assinatura: () => `<h3>Assinatura</h3>
+${assinante ? `<div
+style="background:linear-gradient(135deg,#1a4d2e,#2e7d4a);border-radius:12px;padding:1
+8px;text-align:center;margin-bottom:16px;"><div
+style="font-size:2rem;margin-bottom:6px;">✅</div><div
+style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;">Premium Ativo</div><div
+style="color:rgba(255,255,255,.7);font-size:.8rem;margin-top:3px;">Próxima cobrança: R$
+4,99 em 09/05/2026</div></div><button class="btn-danger"
+onclick="assinante=false;toast('Assinatura
+cancelada.');renderConfigPanel('assinatura')">Cancelar assinatura</button>` : `<div
+style="background:var(--cl);border-radius:12px;padding:18px;text-align:center;margin-bottom
+:16px;"><div style="font-size:2rem;margin-bottom:6px;">⭐</div><div
+style="font-family:'Syne',sans-serif;font-weight:700;color:var(--mm);">Plano
+Gratuito</div></div><button class="btn-config-save" onclick="assinar()">⭐ Assinar R$
+4,99/mês</button>`}`,
+sobre: () => `<h3>Sobre o SoloDash</h3>
+<div class="config-row"><div><div class="config-label">Versão</div></div><span
+style="color:#888;">2.5.0</span></div>
+<div class="config-row"><div><div class="config-label">Última
+atualização</div></div><span style="color:#888;">10 de Abril, 2026</span></div>
+<div class="config-row"><div><div class="config-label">Suporte</div></div><a href="#"
+style="color:var(--ou);font-size:.85rem;" onclick="toast('Abrindo suporte...')">Contato
+→</a></div>
+<div style="margin-top:16px;text-align:center;color:#ccc;font-size:.74rem;">© 2026
+SoloDash · Todos os direitos reservados</div>`
+};
+function configAba(id, el) {
+configAbaAtual = id;
+document.querySelectorAll('.config-nav-item').forEach(x => x.classList.remove('on'));
+if (el) el.classList.add('on');
+renderConfigPanel(id);
+
+}
+function renderConfigPanel(id) {
+const p = document.getElementById('config-panel');
+if (p && configPanels[id]) p.innerHTML = configPanels[id]();
+}
+function mudarTipoConta(tipo, el) {
+tipoConta = tipo;
+renderConfigPanel('tipo');
+atualizarFAB();
+toast('✅ Tipo de conta alterado para ' +
+(tipo==='contratante'?'Contratante':tipo==='artista'?'Artista':'Ambos') + '!');
+}
+// ===== INIT =====
+buildPosts(artistas);
+renderConfigPanel('conta');
+atualizarFAB();
+buscarPessoas('');
+</script>
+</body>
+</html>
